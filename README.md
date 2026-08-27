@@ -29,7 +29,9 @@ Objava nove verzije demoa:
 
 ```bash
 npm run build:pages
-cd dist && git init -b gh-pages && git add -A && git commit -m deploy   && git push -f https://github.com/radivfil/BrunaBulicRentABikePula.git gh-pages
+cd dist
+git init -b gh-pages && git add -A && git commit -m deploy
+git push -f https://github.com/radivfil/BrunaBulicRentABikePula.git gh-pages
 ```
 
 ## Deploy na postojeći shared hosting
