@@ -1,0 +1,50 @@
+---
+/**
+ * Apache servira jednu ErrorDocument datoteku za cijelu domenu, pa 404
+ * ne može znati jezik posjetitelja. Rješenje: naslov na hrvatskom i
+ * engleskom, a ispod linkovi na sve četiri naslovnice — tko god da je
+ * došao, vidi izlaz.
+ */
+import '../styles/global.css';
+import { LOCALE_META } from '../data/site.mjs';
+import { locales, path } from '../i18n/routes';
+import { withBase } from '../lib/url';
+import { UI } from '../i18n/ui';
+---
+
+<!doctype html>
+<html lang="hr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>404 — Rent a Bike Pula</title>
+    <meta name="robots" content="noindex, follow" />
+    <link rel="icon" href={withBase("/favicon.svg")} type="image/svg+xml" />
+  </head>
+  <body class="grid min-h-svh place-items-center">
+    <main class="u-container u-grain max-w-2xl rounded-lg border border-limestone-200 bg-limestone-100 px-8 py-16 text-center">
+      <p class="u-eyebrow">404</p>
+      <h1 class="u-h2 mt-4 font-display font-semibold">{UI.hr['404.title']}</h1>
+      <p class="mt-3 text-ink-soft">{UI.hr['404.lead']}</p>
+
+      <p class="mt-8 border-t border-limestone-200 pt-8 font-display text-xl text-olive-900">
+        {UI.en['404.title']}
+      </p>
+      <p class="mt-2 text-sm text-ink-muted">{UI.en['404.lead']}</p>
+
+      <ul class="mt-10 flex flex-wrap justify-center gap-2">
+        {locales.map((l) => (
+          <li>
+            <a
+              href={path(l)}
+              hreflang={LOCALE_META[l].htmlLang}
+              class="block rounded-sm border border-olive-700 px-5 py-3 text-sm font-semibold text-olive-700 transition-colors hover:bg-olive-700 hover:text-limestone-50"
+            >
+              {LOCALE_META[l].label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </main>
+  </body>
+</html>

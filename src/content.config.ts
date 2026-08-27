@@ -1,0 +1,92 @@
+import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
+
+const LOCALE_KEYS = ['hr', 'en', 'de', 'it'] as const;
+
+/**
+ * Prijevodi se drže UNUTAR jedne datoteke po biciklu, ne u četiri
+ * odvojene datoteke. Razlog: 90 % podataka o biciklu (cijena, brzine,
+ * veličina kotača, slike, količina u floti) je jezično neutralno.
+ * Razdvajanje po jeziku bi značilo 84 datoteke i četiri mjesta na
+ * kojima se cijena može raziću — točno bolest koju stari web ima.
+ */
+const translated = z.object({
+  name: z.string(),
+  tagline: z.string(),
+  description: z.string(),
+  highlights: z.array(z.string()).max(5),
+});
+
+const priceTable = z.object({
+  d1: z.number().positive(),
+  d2: z.number().positive(),
+  d4: z.number().positive(),
+  d7: z.number().positive(),
+  d14: z.number().positive(),
+});
+
+const bikes = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/bikes' }),
+  schema: ({ image }) =>
+    z.object({
+      sku: z.string(),
+      category: z.enum(['e-bike', 'mtb', 'city', 'kids', 'racing']),
+      brand: z.string(),
+      order: z.number().default(50),
+      featured: z.boolean().default(false),
+
+      /** Broj komada u floti — temelj izračuna dostupnosti. */
+      fleetSize: z.number().int().positive(),
+
+      specs: z.object({
+        wheel: z.enum(['16', '20', '24', '26', '27.5', '28', '29']),
+        frame: z.string(),
+        gears: z.number().int().positive().optional(),
+        suspension: z.enum(['rigid', 'hardtail', 'full']).optional(),
+        brakes: z.string().optional(),
+        motor: z.string().optional(),
+        battery: z.string().optional(),
+        range: z.string().optional(),
+        weight: z.number().optional(),
+        sizes: z.array(z.enum(['XS', 'S', 'M', 'L', 'XL', 'one'])),
+        riderHeight: z.tuple([z.number(), z.number()]).optional(),
+      }),
+
+      /** Cijena po danu za svaki tarifni razred. ⚠ DRAFT, vidi data/pricing.ts */
+      pricing: priceTable,
+
+      image: image(),
+      imageAlt: z.record(z.enum(LOCALE_KEYS), z.string()),
+
+      i18n: z.record(z.enum(LOCALE_KEYS), translated),
+
+      /** Podaci o ovom modelu koje klijent još nije potvrdio. */
+      needsReview: z.array(z.string()).default([]),
+    }),
+});
+
+const tours = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/tours' }),
+  schema: ({ image }) =>
+    z.object({
+      order: z.number().default(50),
+      distanceKm: z.number(),
+      ascentM: z.number(),
+      durationH: z.number(),
+      difficulty: z.enum(['easy', 'moderate', 'hard']),
+      minPeople: z.number().int().positive(),
+      pricePerPerson: z.number().positive(),
+      bikeCategory: z.enum(['e-bike', 'mtb', 'city', 'racing']),
+      startPoint: z.string(),
+      image: image(),
+      imageAlt: z.record(z.enum(LOCALE_KEYS), z.string()),
+      i18n: z.record(
+        z.enum(LOCALE_KEYS),
+        translated.extend({ includes: z.array(z.string()) })
+      ),
+      /** Ture ne postoje na starom webu — cijeli sadržaj je prijedlog. */
+      isDraft: z.boolean().default(true),
+    }),
+});
+
+export const collections = { bikes, tours };

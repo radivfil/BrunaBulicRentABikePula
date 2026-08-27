@@ -1,0 +1,64 @@
+---
+import { getCollection } from 'astro:content';
+import PageHeader from './PageHeader.astro';
+import BikeCard from '../catalog/BikeCard.astro';
+import CtaBand from '../site/CtaBand.astro';
+import CatalogFilters from '../../islands/CatalogFilters';
+import { PRICES_ARE_DRAFT } from '../../data/pricing';
+import type { Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const t = useT(lang);
+
+const bikes = (await getCollection('bikes')).sort((a, b) => a.data.order - b.data.order);
+
+const CATEGORIES = ['e-bike', 'mtb', 'city', 'kids', 'racing'] as const;
+const sizes = [...new Set(bikes.flatMap((b) => b.data.specs.sizes))].filter((s) => s !== 'one');
+const maxPrice = Math.max(...bikes.map((b) => b.data.pricing.d1));
+
+const filterLabels = {
+  filters: t('catalog.filters'), all: t('catalog.all'), reset: t('catalog.reset'),
+  sort: t('catalog.sort'), popular: t('catalog.sort.popular'),
+  priceAsc: t('catalog.sort.priceAsc'), priceDesc: t('catalog.sort.priceDesc'),
+  results: t('catalog.results'), empty: t('catalog.empty'),
+  size: t('catalog.size'), maxPrice: t('catalog.maxPrice'),
+  categories: Object.fromEntries(CATEGORIES.map((c) => [c, t(`cat.${c}` as never)])),
+};
+---
+
+<PageHeader lang={lang} routeKey="bikes" title={t('catalog.title')} lead={t('catalog.lead')} />
+
+{/*
+  client:visible, ne client:load. Filtri su ispod hero-a i korisnik ih
+  ne dodiruje u prvoj sekundi — nema razloga da njihov JS natječe s
+  bojanjem prvog ekrana. Kartice su ionako već otisnute na serveru.
+*/}
+<div id="katalog" class="sticky top-[var(--header-h)] z-30">
+  <CatalogFilters
+    client:visible
+    labels={filterLabels}
+    categories={[...CATEGORIES]}
+    sizes={sizes}
+    maxPrice={maxPrice}
+  />
+</div>
+
+<section class="u-container py-12 sm:py-16">
+  {PRICES_ARE_DRAFT && (
+    <p class="mb-8 rounded-sm border border-sand-500/40 bg-sand-500/10 px-4 py-3 text-sm text-ink-soft">
+      {t('prices.draftWarning')}
+    </p>
+  )}
+
+  <ul class="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+    {bikes.map((bike, i) => (
+      <li style={`order:${bike.data.order}`}>
+        <BikeCard bike={bike} lang={lang} eager={i < 3} />
+      </li>
+    ))}
+  </ul>
+</section>
+
+<CtaBand lang={lang} />

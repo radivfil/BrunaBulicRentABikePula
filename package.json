@@ -1,0 +1,27 @@
+{
+  "name": "brunabulicrentabikepula",
+  "type": "module",
+  "version": "0.0.1",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && node scripts/emit-api-data.mjs",
+    "preview": "astro preview",
+    "astro": "astro",
+    "redirects": "node scripts/gen-htaccess.mjs public/.htaccess"
+  },
+  "dependencies": {
+    "@astrojs/preact": "^6.0.4",
+    "@astrojs/sitemap": "^3.7.3",
+    "@preact/preset-vite": "^2.10.6",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.2.9",
+    "preact": "^10.29.8",
+    "tailwindcss": "^4.3.3"
+  },
+  "allowScripts": {
+    "esbuild": true
+  }
+}

@@ -1,0 +1,70 @@
+---
+/**
+ * Dispatcher za sve sekcijske stranice.
+ *
+ * Zašto jedna datoteka umjesto /bicikli/, /ture/, /cjenik/…:
+ * slugovi su lokalizirani (bicikli / bikes / fahrraeder / biciclette), a
+ * Astro rute su nazivi mapa na disku — jedna mapa ne može imati četiri
+ * imena. Alternativa bi bila 4 × 8 = 32 gotovo identične datoteke.
+ * Ovdje getStaticPaths ispisuje sve kombinacije iz jedne rute-mape, a
+ * sadržaj svake stranice živi u vlastitoj komponenti.
+ */
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import CatalogPage from '../../../components/pages/CatalogPage.astro';
+import ToursPage from '../../../components/pages/ToursPage.astro';
+import PricesPage from '../../../components/pages/PricesPage.astro';
+import EquipmentPage from '../../../components/pages/EquipmentPage.astro';
+import AboutPage from '../../../components/pages/AboutPage.astro';
+import ContactPage from '../../../components/pages/ContactPage.astro';
+import TermsPage from '../../../components/pages/TermsPage.astro';
+import BookingSummaryPage from '../../../components/pages/BookingSummaryPage.astro';
+import { ROUTES, locales, type Locale, type RouteKey } from '../../../i18n/routes';
+import { useT, type UIKey } from '../../../i18n/ui';
+
+const SECTIONS = ['bikes', 'tours', 'prices', 'equipment', 'about', 'contact', 'terms', 'booking'] as const;
+type SectionKey = (typeof SECTIONS)[number];
+
+export function getStaticPaths() {
+  return locales.flatMap((lang) =>
+    (['bikes', 'tours', 'prices', 'equipment', 'about', 'contact', 'terms', 'booking'] as const).map((key) => ({
+      params: { lang, section: ROUTES[key][lang] },
+      props: { routeKey: key },
+    }))
+  );
+}
+
+const lang = Astro.params.lang as Locale;
+const { routeKey } = Astro.props as { routeKey: SectionKey };
+const t = useT(lang);
+
+// Sažetak rezervacije nikad ne smije u indeks — sadrži parametre narudžbe.
+const noindex = routeKey === 'booking';
+
+const seo: Record<SectionKey, { title: UIKey; desc: UIKey }> = {
+  bikes: { title: 'seo.bikes.title', desc: 'seo.bikes.desc' },
+  tours: { title: 'seo.tours.title', desc: 'seo.tours.desc' },
+  prices: { title: 'seo.prices.title', desc: 'seo.prices.desc' },
+  equipment: { title: 'seo.equipment.title', desc: 'seo.equipment.desc' },
+  about: { title: 'seo.about.title', desc: 'seo.about.desc' },
+  contact: { title: 'seo.contact.title', desc: 'seo.contact.desc' },
+  terms: { title: 'seo.terms.title', desc: 'seo.terms.desc' },
+  booking: { title: 'seo.home.title', desc: 'seo.home.desc' },
+};
+---
+
+<BaseLayout
+  lang={lang}
+  routeKey={routeKey as RouteKey}
+  title={t(seo[routeKey].title)}
+  description={t(seo[routeKey].desc)}
+  noindex={noindex}
+>
+  {routeKey === 'bikes' && <CatalogPage lang={lang} />}
+  {routeKey === 'tours' && <ToursPage lang={lang} />}
+  {routeKey === 'prices' && <PricesPage lang={lang} />}
+  {routeKey === 'equipment' && <EquipmentPage lang={lang} />}
+  {routeKey === 'about' && <AboutPage lang={lang} />}
+  {routeKey === 'contact' && <ContactPage lang={lang} />}
+  {routeKey === 'terms' && <TermsPage lang={lang} />}
+  {routeKey === 'booking' && <BookingSummaryPage lang={lang} />}
+</BaseLayout>

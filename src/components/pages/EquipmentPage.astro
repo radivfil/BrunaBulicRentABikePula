@@ -1,0 +1,47 @@
+---
+import PageHeader from './PageHeader.astro';
+import CtaBand from '../site/CtaBand.astro';
+import { EXTRAS, DELIVERY_ZONES, ratePerDay } from '../../data/pricing';
+import { path, type Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const t = useT(lang);
+---
+
+<PageHeader lang={lang} routeKey="equipment" title={t('equipment.title')} lead={t('equipment.lead')} />
+
+<div class="u-container py-16">
+  <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+    {EXTRAS.map((e) => (
+      <li class="u-reveal flex flex-col justify-between rounded-md border border-limestone-200 bg-limestone-100 p-5">
+        <h2 class="font-display text-lg leading-snug font-semibold text-olive-900">{e.label[lang]}</h2>
+        <p class="mt-4 flex items-baseline gap-1">
+          <span class="text-xs text-ink-muted">{t('catalog.from')}</span>
+          <span class="font-display text-2xl font-semibold text-olive-900">{ratePerDay(e.perDay, 14)} €</span>
+          <span class="text-xs text-ink-muted">{t('catalog.perDay')}</span>
+        </p>
+      </li>
+    ))}
+  </ul>
+
+  <section class="mt-16 rounded-md border border-limestone-200 bg-limestone-100 p-6 sm:p-8">
+    <h2 class="u-h3 font-display font-semibold">{t('prices.delivery')}</h2>
+    <ul class="mt-5 grid gap-3 sm:grid-cols-2">
+      {DELIVERY_ZONES.map((z) => (
+        <li class="flex items-baseline justify-between gap-4 border-b border-limestone-200 pb-3 text-sm">
+          <span>{z.label[lang]}</span>
+          <span class="shrink-0 font-semibold tabular-nums">{z.price === 0 ? t('prices.free') : `${z.price} €`}</span>
+        </li>
+      ))}
+    </ul>
+    <p class="mt-6 text-sm">
+      <a href={path(lang, 'prices')} class="font-semibold text-terracotta-600 underline-offset-4 hover:underline">
+        {t('prices.title')} →
+      </a>
+    </p>
+  </section>
+</div>
+
+<CtaBand lang={lang} />

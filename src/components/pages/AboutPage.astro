@@ -1,0 +1,101 @@
+---
+import { Image } from 'astro:assets';
+import aboutImg from '../../assets/site/banner-about.jpg';
+import PageHeader from './PageHeader.astro';
+import CtaBand from '../site/CtaBand.astro';
+import { BUSINESS } from '../../data/site.mjs';
+import type { Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const t = useT(lang);
+
+/**
+ * Tekst je prerada engleskog originala s about.php. Original je bio
+ * napisan u trećem licu i pomalo generički ("one of the most appreciated
+ * names on the Croatian market"); ovdje je vraćen u prvo lice i vezan uz
+ * konkretno mjesto, jer to je jedino što stranicu razlikuje od stotinu
+ * drugih rent-a-bike stranica na Jadranu.
+ *
+ * ⚠ Godina osnutka i broj godina iskustva nisu potvrđeni — provjeriti.
+ */
+const COPY: Record<Locale, { p: string[]; alt: string }> = {
+  hr: {
+    alt: 'Brdski bicikl u travi iznad mora u okolici Šišana',
+    p: [
+      'Biciklizam nije samo sport ni hobi. To je najbolji način da se vidi Istra — bliže krajoliku i bliže ljudima nego iz auta ili s broda. Ali za pravi doživljaj treba i pristojan bicikl.',
+      'B.R.B. Sport je obiteljska tvrtka u Šišanu kraj Pule. Godinama se bavimo prodajom i veleprodajom bicikala, a specijalizirani smo za servis — sastavljanje, popravke i održavanje. Zato bicikli koje iznajmljujemo prolaze kroz istu radionicu kroz koju prolaze i oni koje prodajemo.',
+      'Naši bicikli odgovaraju svima: onima koji voze dva puta godišnje, onima koji odmor planiraju oko ruta, i onima koji dolaze s vlastitim pedalama. Rado ćemo vam pomoći oko izbora bicikla, staza, karata i svega ostalog što odmor u Istri može učiniti boljim.',
+      'Svratite, nazovite ili pišite — tu smo.',
+    ],
+  },
+  en: {
+    alt: 'A mountain bike in the grass above the sea near Šišan',
+    p: [
+      'Cycling is not only a sport or a hobby. It is the best way to see Istria — closer to the landscape and closer to the people than from a car or a boat. But for the full experience you also need a decent bike.',
+      'B.R.B. Sport is a family business in Šišan near Pula. We have sold bikes retail and wholesale for years, and we specialise in service — assembly, repair and maintenance. That is why the bikes we rent out go through the same workshop as the ones we sell.',
+      'Our bikes suit everyone: people who ride twice a year, people who plan their holiday around routes, and people who arrive with their own pedals. We are happy to help you choose a bike, and to advise on trails, maps and anything else that makes a holiday in Istria better.',
+      'Drop by, call or write — we are here.',
+    ],
+  },
+  de: {
+    alt: 'Ein Mountainbike im Gras über dem Meer bei Šišan',
+    p: [
+      'Radfahren ist nicht nur Sport oder Hobby. Es ist die beste Art, Istrien zu sehen — näher an der Landschaft und näher an den Menschen als aus dem Auto oder vom Boot. Für das volle Erlebnis braucht es aber auch ein ordentliches Rad.',
+      'B.R.B. Sport ist ein Familienbetrieb in Šišan bei Pula. Wir verkaufen seit Jahren Fahrräder im Einzel- und Großhandel und sind auf Service spezialisiert — Montage, Reparatur und Wartung. Deshalb durchlaufen unsere Mieträder dieselbe Werkstatt wie die Räder, die wir verkaufen.',
+      'Unsere Räder passen zu allen: zu denen, die zweimal im Jahr fahren, zu denen, die ihren Urlaub um Routen herum planen, und zu denen, die mit eigenen Pedalen anreisen. Gerne helfen wir bei der Wahl des Rades und beraten zu Trails, Karten und allem, was den Urlaub in Istrien besser macht.',
+      'Kommen Sie vorbei, rufen Sie an oder schreiben Sie — wir sind da.',
+    ],
+  },
+  it: {
+    alt: 'Una mountain bike nell’erba sopra il mare vicino a Šišan',
+    p: [
+      'Andare in bici non è solo sport o hobby. È il modo migliore per vedere l’Istria — più vicini al paesaggio e alle persone di quanto si possa da un’auto o da una barca. Ma per l’esperienza completa serve anche una bici come si deve.',
+      'B.R.B. Sport è un’azienda familiare a Šišan, vicino a Pola. Vendiamo biciclette al dettaglio e all’ingrosso da anni e siamo specializzati in assistenza: montaggio, riparazione e manutenzione. Per questo le bici che noleggiamo passano dalla stessa officina di quelle che vendiamo.',
+      'Le nostre bici vanno bene per tutti: per chi pedala due volte l’anno, per chi organizza la vacanza attorno ai percorsi e per chi arriva con i propri pedali. Vi aiutiamo volentieri a scegliere la bici e vi consigliamo su sentieri, mappe e tutto ciò che può migliorare una vacanza in Istria.',
+      'Passate, chiamate o scrivete — ci siamo.',
+    ],
+  },
+};
+
+const copy = COPY[lang];
+---
+
+<PageHeader lang={lang} routeKey="about" title={t('about.title')} lead={t('about.lead')} />
+
+<div class="u-container grid gap-12 py-16 lg:grid-cols-12 lg:gap-16">
+  <div class="lg:col-span-7">
+    {copy.p.map((para, i) => (
+      <p class:list={['leading-relaxed text-ink-soft', i === 0 ? 'u-lead text-ink' : 'mt-5']}>{para}</p>
+    ))}
+
+    <dl class="mt-10 grid gap-6 border-t border-limestone-200 pt-8 sm:grid-cols-3">
+      <div>
+        <dt class="text-xs tracking-wide text-ink-muted uppercase">{t('contact.address')}</dt>
+        <dd class="mt-1 text-sm">{BUSINESS.street}, {BUSINESS.district}<br />{BUSINESS.postalCode} {BUSINESS.city}</dd>
+      </div>
+      <div>
+        <dt class="text-xs tracking-wide text-ink-muted uppercase">{t('contact.phone')}</dt>
+        <dd class="mt-1 text-sm"><a href={`tel:${BUSINESS.phoneHref}`} class="hover:text-terracotta-600">{BUSINESS.phone}</a></dd>
+      </div>
+      <div>
+        <dt class="text-xs tracking-wide text-ink-muted uppercase">{t('contact.email')}</dt>
+        <dd class="mt-1 text-sm break-all"><a href={`mailto:${BUSINESS.email}`} class="hover:text-terracotta-600">{BUSINESS.email}</a></dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="lg:col-span-5">
+    <Image
+      src={aboutImg}
+      alt={copy.alt}
+      widths={[480, 720, 1024]}
+      sizes="(min-width: 1024px) 28rem, 92vw"
+      loading="lazy"
+      class="aspect-[4/5] w-full rounded-md object-cover shadow-card"
+    />
+  </div>
+</div>
+
+<CtaBand lang={lang} />

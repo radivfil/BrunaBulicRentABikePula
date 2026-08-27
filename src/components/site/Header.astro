@@ -1,0 +1,115 @@
+---
+import { BUSINESS, LOCALE_META } from '../../data/site.mjs';
+import { path, alternates, locales, type Locale, type RouteKey } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale; routeKey: RouteKey; slug?: string }
+const { lang, routeKey, slug } = Astro.props;
+const t = useT(lang);
+
+const nav: Array<{ key: RouteKey; label: string }> = [
+  { key: 'bikes', label: t('nav.bikes') },
+  { key: 'tours', label: t('nav.tours') },
+  { key: 'prices', label: t('nav.prices') },
+  { key: 'about', label: t('nav.about') },
+  { key: 'contact', label: t('nav.contact') },
+];
+
+// Prebacivač jezika vodi na ISTU stranicu na drugom jeziku, ne na
+// naslovnicu. Zvuči očito, a upravo to stari web ne radi.
+const langLinks = alternates(routeKey, slug);
+---
+
+<header
+  class="sticky top-0 z-40 border-b border-limestone-200/70 bg-limestone-50/85 backdrop-blur-md"
+  style="height: var(--header-h)"
+>
+  <div class="u-container flex h-full min-w-0 items-center gap-3 sm:gap-4">
+    <a href={path(lang)} class="group flex min-w-0 items-center gap-2.5" aria-label="Rent a Bike Pula">
+      <svg viewBox="0 0 32 32" class="h-8 w-8 text-terracotta-600" aria-hidden="true" fill="none">
+        <circle cx="8" cy="22" r="6" stroke="currentColor" stroke-width="2" />
+        <circle cx="24" cy="22" r="6" stroke="currentColor" stroke-width="2" />
+        <path d="M8 22 14 10h6l4 12M12 10h5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+      </svg>
+      <span class="truncate font-display text-base leading-none font-semibold tracking-tight text-olive-900 sm:text-lg">
+        Rent a Bike <span class="text-terracotta-600">Pula</span>
+      </span>
+    </a>
+
+    <nav class="ml-auto hidden items-center gap-1 lg:flex" aria-label={t('nav.menu')}>
+      {nav.map((item) => (
+        <a
+          href={path(lang, item.key)}
+          aria-current={item.key === routeKey ? 'page' : undefined}
+          class="rounded-sm px-3 py-2 text-sm font-medium text-ink-soft transition-colors hover:text-terracotta-600 aria-[current=page]:text-terracotta-600"
+        >
+          {item.label}
+        </a>
+      ))}
+    </nav>
+
+    {/* Telefon je na mobitelu najvrjedniji element cijele stranice —
+        pola rezervacija u ovoj branši završi pozivom, ne formom. */}
+    <a
+      href={`tel:${BUSINESS.phoneHref}`}
+      class="ml-auto flex items-center gap-2 rounded-sm px-2 py-2 text-sm font-semibold text-olive-700 transition-colors hover:text-terracotta-600 lg:ml-0"
+    >
+      <svg viewBox="0 0 20 20" class="h-4 w-4" fill="currentColor" aria-hidden="true">
+        <path d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.9a1.5 1.5 0 0 1 1.46 1.14l.5 2a1.5 1.5 0 0 1-.42 1.45l-1 1a11.5 11.5 0 0 0 4.47 4.47l1-1a1.5 1.5 0 0 1 1.45-.42l2 .5A1.5 1.5 0 0 1 18 12.6v1.9a1.5 1.5 0 0 1-1.5 1.5A14.5 14.5 0 0 1 2 3.5Z" />
+      </svg>
+      <span class="hidden sm:inline">{BUSINESS.phone}</span>
+    </a>
+
+    <details class="relative shrink-0">
+      <summary
+        class="flex cursor-pointer list-none items-center gap-1 rounded-sm px-2 py-2 text-sm font-semibold text-ink-soft transition-colors hover:text-terracotta-600"
+        aria-label={t('nav.language')}
+      >
+        {LOCALE_META[lang].short}
+        <svg viewBox="0 0 12 12" class="h-3 w-3" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true">
+          <path d="m3 4.5 3 3 3-3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </summary>
+      <ul class="absolute right-0 top-full mt-1 min-w-32 overflow-hidden rounded-sm border border-limestone-200 bg-limestone-50 shadow-card">
+        {langLinks.map((l) => (
+          <li>
+            <a
+              href={l.href}
+              hreflang={LOCALE_META[l.locale].htmlLang}
+              lang={LOCALE_META[l.locale].htmlLang}
+              class="block px-3 py-2 text-sm text-ink-soft transition-colors hover:bg-limestone-100 hover:text-terracotta-600 aria-[current=true]:font-semibold aria-[current=true]:text-terracotta-600"
+              aria-current={l.locale === lang ? 'true' : undefined}
+            >
+              {LOCALE_META[l.locale].label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+
+    <a
+      href={path(lang, 'bikes')}
+      class="hidden shrink-0 rounded-sm bg-terracotta-600 px-4 py-2.5 text-sm font-semibold text-limestone-50 transition-colors hover:bg-terracotta-700 lg:inline-block"
+    >
+      {t('nav.book')}
+    </a>
+
+    {/* Mobilni izbornik je <details> — bez JS-a, radi i prije hidracije. */}
+    <details class="relative shrink-0 lg:hidden">
+      <summary class="flex cursor-pointer list-none items-center rounded-sm p-2 text-olive-700" aria-label={t('nav.menu')}>
+        <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M4 7h16M4 12h16M4 17h16" stroke-linecap="round" />
+        </svg>
+      </summary>
+      <ul class="absolute right-0 top-full mt-1 min-w-52 overflow-hidden rounded-sm border border-limestone-200 bg-limestone-50 shadow-card">
+        {nav.map((item) => (
+          <li>
+            <a href={path(lang, item.key)} class="block px-4 py-3 text-sm font-medium text-ink-soft hover:bg-limestone-100">
+              {item.label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </details>
+  </div>
+</header>

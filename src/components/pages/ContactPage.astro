@@ -1,0 +1,151 @@
+---
+import PageHeader from './PageHeader.astro';
+import { BUSINESS } from '../../data/site.mjs';
+import type { Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const t = useT(lang);
+
+const mapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${BUSINESS.geo.lat},${BUSINESS.geo.lng}`;
+
+/**
+ * Forma šalje mailto: — na statičnom hostingu bez servera to je jedina
+ * varijanta koja radi bez trećih strana. Kad se upali PHP end-point za
+ * Stripe, ista forma dobiva `action="/api/contact.php"` i jednu skrivenu
+ * honeypot kontrolu; do tada gost barem ima predložen tekst e-maila.
+ */
+const subject = { hr: 'Upit za najam bicikala', en: 'Bike rental enquiry', de: 'Anfrage Fahrradverleih', it: 'Richiesta noleggio bici' }[lang];
+---
+
+<PageHeader lang={lang} routeKey="contact" title={t('contact.title')} lead={t('contact.lead')} />
+
+<div class="u-container grid gap-12 py-16 lg:grid-cols-12 lg:gap-16">
+  <div class="lg:col-span-5">
+    <dl class="space-y-8">
+      <div>
+        <dt class="text-xs font-semibold tracking-[0.14em] text-ink-muted uppercase">{t('contact.address')}</dt>
+        <dd class="mt-2 font-display text-xl leading-snug text-olive-900">
+          {BUSINESS.street}, {BUSINESS.district}<br />
+          {BUSINESS.postalCode} {BUSINESS.city}, {BUSINESS.countryName}
+        </dd>
+        <a href={mapsUrl} rel="noopener" target="_blank" class="mt-2 inline-block text-sm font-semibold text-terracotta-600 underline-offset-4 hover:underline">
+          {t('contact.directions')} →
+        </a>
+      </div>
+
+      <div>
+        <dt class="text-xs font-semibold tracking-[0.14em] text-ink-muted uppercase">{t('contact.phone')}</dt>
+        <dd class="mt-2">
+          <a href={`tel:${BUSINESS.phoneHref}`} class="font-display text-2xl font-semibold text-olive-900 hover:text-terracotta-600">
+            {BUSINESS.phone}
+          </a>
+          <span class="ml-2 text-sm text-ink-muted">({BUSINESS.contactPerson})</span>
+        </dd>
+        <a
+          href={`https://wa.me/${BUSINESS.whatsapp}`}
+          rel="noopener"
+          target="_blank"
+          class="mt-3 inline-block rounded-sm bg-olive-700 px-4 py-2.5 text-sm font-semibold text-limestone-50 transition-colors hover:bg-terracotta-600"
+        >
+          {t('contact.whatsapp')}
+        </a>
+      </div>
+
+      <div>
+        <dt class="text-xs font-semibold tracking-[0.14em] text-ink-muted uppercase">{t('contact.email')}</dt>
+        <dd class="mt-2">
+          <a href={`mailto:${BUSINESS.email}`} class="text-lg break-all text-olive-900 underline-offset-4 hover:text-terracotta-600 hover:underline">
+            {BUSINESS.email}
+          </a>
+        </dd>
+      </div>
+
+      <div>
+        <dt class="text-xs font-semibold tracking-[0.14em] text-ink-muted uppercase">{t('contact.hours')}</dt>
+        <dd class="mt-2">
+          <table class="w-full max-w-xs text-sm">
+            <tbody class="divide-y divide-limestone-200">
+              <tr><th scope="row" class="py-2 text-left font-normal text-ink-soft">{t('contact.hours.weekdays')}</th><td class="py-2 text-right font-medium">8:30 – 20:00</td></tr>
+              <tr><th scope="row" class="py-2 text-left font-normal text-ink-soft">{t('contact.hours.saturday')}</th><td class="py-2 text-right font-medium">9:00 – 14:00</td></tr>
+              <tr><th scope="row" class="py-2 text-left font-normal text-ink-soft">{t('contact.hours.sunday')}</th><td class="py-2 text-right font-medium text-ink-muted">{t('contact.closed')}</td></tr>
+            </tbody>
+          </table>
+        </dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="lg:col-span-7">
+    <form
+      action={`mailto:${BUSINESS.email}`}
+      method="post"
+      enctype="text/plain"
+      class="rounded-md border border-limestone-200 bg-limestone-100 p-6 sm:p-8"
+    >
+      <input type="hidden" name="subject" value={subject} />
+
+      <div class="grid gap-5 sm:grid-cols-2">
+        <label class="block">
+          <span class="text-xs font-semibold tracking-[0.14em] text-ink-muted uppercase">{t('contact.form.name')}</span>
+          <input type="text" name="name" required autocomplete="name"
+            class="mt-2 w-full rounded-xs border border-limestone-200 bg-limestone-50 px-3 py-2.5 text-sm" />
+        </label>
+        <label class="block">
+          <span class="text-xs font-semibold tracking-[0.14em] text-ink-muted uppercase">{t('contact.form.email')}</span>
+          <input type="email" name="email" required autocomplete="email"
+            class="mt-2 w-full rounded-xs border border-limestone-200 bg-limestone-50 px-3 py-2.5 text-sm" />
+        </label>
+      </div>
+
+      <label class="mt-5 block">
+        <span class="text-xs font-semibold tracking-[0.14em] text-ink-muted uppercase">{t('contact.form.dates')}</span>
+        <input type="text" name="dates" placeholder="2026-07-14 → 2026-07-21"
+          class="mt-2 w-full rounded-xs border border-limestone-200 bg-limestone-50 px-3 py-2.5 text-sm" />
+      </label>
+
+      <label class="mt-5 block">
+        <span class="text-xs font-semibold tracking-[0.14em] text-ink-muted uppercase">{t('contact.form.message')}</span>
+        <textarea name="message" rows="5" required
+          class="mt-2 w-full rounded-xs border border-limestone-200 bg-limestone-50 px-3 py-2.5 text-sm"></textarea>
+      </label>
+
+      <label class="mt-5 flex items-start gap-3 text-sm text-ink-soft">
+        <input type="checkbox" required class="mt-1 accent-terracotta-600" />
+        {t('contact.form.consent')}
+      </label>
+
+      <button type="submit"
+        class="mt-6 w-full rounded-sm bg-terracotta-600 px-6 py-3.5 text-sm font-semibold text-limestone-50 transition-colors hover:bg-terracotta-700 sm:w-auto">
+        {t('contact.form.send')}
+      </button>
+    </form>
+
+    {/*
+      Namjerno BEZ ugrađene Google karte. Njezin iframe povuče ~900 kB
+      JS-a treće strane, sruši Lighthouse i traži cookie privolu. Statična
+      kartica s linkom na navigaciju rješava isti zadatak — gost ionako
+      želi rutu na svom telefonu, ne kartu u pregledniku.
+    */}
+    <a
+      href={mapsUrl}
+      rel="noopener"
+      target="_blank"
+      class="u-grain group mt-6 flex items-center justify-between gap-6 rounded-md border border-limestone-200 bg-limestone-100 p-6 transition-shadow hover:shadow-card"
+    >
+      <span>
+        <span class="block font-display text-lg font-semibold text-olive-900">{BUSINESS.district}, {BUSINESS.city}</span>
+        <span class="mt-1 block text-sm text-ink-muted">
+          {BUSINESS.geo.lat.toFixed(4)}, {BUSINESS.geo.lng.toFixed(4)} · 12 km {lang === 'hr' ? 'od Pule' : lang === 'de' ? 'von Pula' : lang === 'it' ? 'da Pola' : 'from Pula'}
+        </span>
+      </span>
+      <span class="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-terracotta-600 text-limestone-50 transition-transform group-hover:scale-110">
+        <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M12 21s7-5.5 7-11a7 7 0 1 0-14 0c0 5.5 7 11 7 11Z" stroke-linejoin="round" />
+          <circle cx="12" cy="10" r="2.5" />
+        </svg>
+      </span>
+    </a>
+  </div>
+</div>

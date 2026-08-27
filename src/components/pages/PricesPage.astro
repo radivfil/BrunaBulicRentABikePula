@@ -1,0 +1,149 @@
+---
+import { getCollection } from 'astro:content';
+import PageHeader from './PageHeader.astro';
+import CtaBand from '../site/CtaBand.astro';
+import { TIERS, EXTRAS, DELIVERY_ZONES, PRICES_ARE_DRAFT, GROUP_DISCOUNT } from '../../data/pricing';
+import { path, type Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const t = useT(lang);
+
+const bikes = (await getCollection('bikes')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const CATEGORIES = ['e-bike', 'mtb', 'city', 'kids', 'racing'] as const;
+
+const tierHead = TIERS.map((tier) => ({
+  label: `${tier.minDays}${tier.minDays >= 2 ? '+' : ''}`,
+  unit: tier.minDays === 1 ? t('product.day') : t('product.days'),
+  key: tier.key,
+}));
+---
+
+<PageHeader lang={lang} routeKey="prices" title={t('prices.title')} lead={t('prices.lead')}>
+  {PRICES_ARE_DRAFT && (
+    <p class="mt-6 max-w-2xl rounded-sm border border-sand-500/50 bg-sand-500/10 px-4 py-3 text-sm text-ink-soft">
+      {t('prices.draftWarning')}
+    </p>
+  )}
+</PageHeader>
+
+<div class="u-container py-16">
+  {/*
+    Cjenik je HTML tablica, a ne PDF. Na starom webu su sve tri cjenovne
+    liste bile skenirani PDF-i — nevidljivi tražilici, nečitljivi na
+    mobitelu i neupotrebljivi za čitač ekrana. Ovo je ista informacija
+    koju Google može indeksirati i prikazati u rezultatima.
+  */}
+  <section>
+    <h2 class="u-h3 font-display font-semibold">{t('prices.bikes')}</h2>
+
+    {CATEGORIES.map((cat) => {
+      const rows = bikes.filter((b) => b.data.category === cat);
+      if (rows.length === 0) return null;
+      return (
+        <div class="mt-10">
+          <h3 class="text-xs font-semibold tracking-[0.16em] text-terracotta-600 uppercase">
+            {t(`cat.${cat}` as never)}
+          </h3>
+          <div class="mt-3 overflow-x-auto">
+            <table class="w-full min-w-[42rem] border-collapse text-sm">
+              <thead>
+                <tr class="border-b border-limestone-300 text-left">
+                  <th scope="col" class="py-2.5 pr-4 text-xs font-semibold tracking-wide text-ink-muted uppercase">
+                    {t('prices.model')}
+                  </th>
+                  {tierHead.map((h) => (
+                    <th scope="col" class="py-2.5 pr-4 text-right text-xs font-semibold tracking-wide text-ink-muted uppercase">
+                      {h.label} {h.unit}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-limestone-200">
+                {rows.map((b) => (
+                  <tr class="hover:bg-limestone-100">
+                    <th scope="row" class="py-3 pr-4 text-left font-medium">
+                      <a href={path(lang, 'bikes', b.id)} class="underline-offset-4 hover:text-terracotta-600 hover:underline">
+                        {b.data.i18n[lang]!.name}
+                      </a>
+                    </th>
+                    {tierHead.map((h) => (
+                      <td class="py-3 pr-4 text-right tabular-nums">
+                        {b.data.pricing[h.key]} €
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      );
+    })}
+
+    <p class="mt-8 rounded-sm bg-olive-100 px-4 py-3 text-sm text-olive-900">
+      <strong>−{GROUP_DISCOUNT.pct} %</strong> na navedene cijene za {GROUP_DISCOUNT.minBikes}+ bicikala.
+      {' '}<a href={path(lang, 'contact')} class="underline underline-offset-4">{t('cta.write')}</a>
+    </p>
+  </section>
+
+  <section class="mt-20">
+    <h2 class="u-h3 font-display font-semibold">{t('prices.equipment')}</h2>
+    <div class="mt-6 overflow-x-auto">
+      <table class="w-full min-w-[42rem] border-collapse text-sm">
+        <thead>
+          <tr class="border-b border-limestone-300 text-left">
+            <th scope="col" class="py-2.5 pr-4 text-xs font-semibold tracking-wide text-ink-muted uppercase">{t('prices.item')}</th>
+            {tierHead.map((h) => (
+              <th scope="col" class="py-2.5 pr-4 text-right text-xs font-semibold tracking-wide text-ink-muted uppercase">
+                {h.label} {h.unit}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-limestone-200">
+          {EXTRAS.map((e) => (
+            <tr class="hover:bg-limestone-100">
+              <th scope="row" class="py-3 pr-4 text-left font-medium">{e.label[lang]}</th>
+              {tierHead.map((h) => <td class="py-3 pr-4 text-right tabular-nums">{e.perDay[h.key]} €</td>)}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="mt-20">
+    <h2 class="u-h3 font-display font-semibold">{t('prices.delivery')}</h2>
+    <div class="mt-6 overflow-x-auto">
+      <table class="w-full min-w-[30rem] border-collapse text-sm">
+        <thead>
+          <tr class="border-b border-limestone-300 text-left">
+            <th scope="col" class="py-2.5 pr-4 text-xs font-semibold tracking-wide text-ink-muted uppercase">{t('prices.zone')}</th>
+            <th scope="col" class="py-2.5 pr-4 text-right text-xs font-semibold tracking-wide text-ink-muted uppercase">{t('prices.oneWay')}</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-limestone-200">
+          {DELIVERY_ZONES.map((z) => (
+            <tr class="hover:bg-limestone-100">
+              <th scope="row" class="py-3 pr-4 text-left font-medium">{z.label[lang]}</th>
+              <td class="py-3 pr-4 text-right tabular-nums">{z.price === 0 ? t('prices.free') : `${z.price} €`}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <p class="mt-12 border-t border-limestone-200 pt-6 text-sm">
+    <a href={path(lang, 'terms')} class="font-semibold text-terracotta-600 underline-offset-4 hover:underline">
+      {t('prices.terms')} →
+    </a>
+  </p>
+</div>
+
+<CtaBand lang={lang} />

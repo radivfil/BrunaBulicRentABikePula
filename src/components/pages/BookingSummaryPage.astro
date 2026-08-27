@@ -1,0 +1,124 @@
+---
+import PageHeader from './PageHeader.astro';
+import { BUSINESS } from '../../data/site.mjs';
+import { path, type Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const t = useT(lang);
+
+/**
+ * Odredište booking widgeta.
+ *
+ * U DEMO načinu widget šalje ovamo s parametrima u URL-u i gost vidi
+ * potpuni sažetak plus pripremljen e-mail — dakle cijeli tijek je
+ * klikabilan bez ijednog Stripe ključa i bez servera.
+ *
+ * U LIVE načinu ova stranica postaje `success_url` Stripe Checkouta:
+ * PHP end-point vrati `?session_id=…`, a ovdje se ispiše potvrda.
+ *
+ * Popunjavanje radi 15 redaka inline skripte umjesto islanda — stranica
+ * se otvara jednom, nakon plaćanja, i ne treba joj Preact.
+ */
+const labels = {
+  bike: t('booking.bike'), dates: t('booking.dates'), qty: t('booking.qty'),
+  size: t('booking.size'), delivery: t('booking.delivery'),
+  total: t('booking.total'), deposit: t('booking.deposit'), rest: t('booking.rest'),
+  send: t('contact.form.send'), call: t('cta.call'),
+};
+---
+
+<PageHeader lang={lang} routeKey="booking" title={t('booking.summary')} />
+
+<div class="u-container py-16">
+  <div class="mx-auto max-w-2xl">
+    <p
+      id="demo-note"
+      hidden
+      class="mb-6 rounded-sm border border-sand-500/50 bg-sand-500/10 px-4 py-3 text-sm text-ink-soft"
+    >
+      {t('booking.demoNotice')}
+    </p>
+
+    <dl id="summary" class="divide-y divide-limestone-200 rounded-md border border-limestone-200 bg-limestone-100 px-6">
+      <div class="flex justify-between gap-4 py-4"><dt class="text-ink-muted">{labels.bike}</dt><dd data-f="bike" class="text-right font-medium">—</dd></div>
+      <div class="flex justify-between gap-4 py-4"><dt class="text-ink-muted">{labels.dates}</dt><dd data-f="dates" class="text-right font-medium">—</dd></div>
+      <div class="flex justify-between gap-4 py-4"><dt class="text-ink-muted">{labels.qty}</dt><dd data-f="qty" class="text-right font-medium">—</dd></div>
+      <div class="flex justify-between gap-4 py-4"><dt class="text-ink-muted">{labels.size}</dt><dd data-f="size" class="text-right font-medium">—</dd></div>
+      <div class="flex justify-between gap-4 py-4"><dt class="text-ink-muted">{labels.delivery}</dt><dd data-f="delivery" class="text-right font-medium">—</dd></div>
+      <div class="flex justify-between gap-4 py-5 font-display text-xl font-semibold text-olive-900">
+        <dt>{labels.total}</dt><dd data-f="total">—</dd>
+      </div>
+      <div class="flex justify-between gap-4 py-4 text-sm text-ink-muted"><dt>{labels.deposit}</dt><dd data-f="deposit">—</dd></div>
+    </dl>
+
+    <div class="mt-8 flex flex-wrap gap-3">
+      <a
+        id="mailto"
+        href={`mailto:${BUSINESS.email}`}
+        class="rounded-sm bg-terracotta-600 px-6 py-3.5 text-sm font-semibold text-limestone-50 transition-colors hover:bg-terracotta-700"
+      >
+        {labels.send}
+      </a>
+      <a
+        href={`tel:${BUSINESS.phoneHref}`}
+        class="rounded-sm border border-olive-700 px-6 py-3.5 text-sm font-semibold text-olive-700 transition-colors hover:bg-olive-700 hover:text-limestone-50"
+      >
+        {labels.call} · {BUSINESS.phone}
+      </a>
+      <a
+        href={path(lang, 'bikes')}
+        class="rounded-sm px-6 py-3.5 text-sm font-semibold text-ink-muted underline-offset-4 hover:text-terracotta-600 hover:underline"
+      >
+        {t('product.back')}
+      </a>
+    </div>
+  </div>
+</div>
+
+<script is:inline define:vars={{ email: BUSINESS.email }}>
+  (function () {
+    var q = new URLSearchParams(location.search);
+    if (!q.get('bike')) return;
+
+    var set = function (name, value) {
+      var el = document.querySelector('[data-f="' + name + '"]');
+      if (el && value) el.textContent = value;
+    };
+
+    var from = q.get('from') || '';
+    var to = q.get('to') || '';
+
+    set('bike', q.get('bike'));
+    set('dates', from + ' → ' + to);
+    set('qty', q.get('qty'));
+    set('size', q.get('size') === 'one' ? '—' : q.get('size'));
+    set('delivery', q.get('delivery'));
+    set('total', q.get('total') + ' €');
+    set('deposit', q.get('deposit') + ' €');
+
+    if (q.get('demo') === '1') {
+      var note = document.getElementById('demo-note');
+      if (note) note.hidden = false;
+    }
+
+    var body = [
+      'Bicikl: ' + q.get('bike'),
+      'Termin: ' + from + ' - ' + to,
+      'Komada: ' + q.get('qty'),
+      'Velicina: ' + q.get('size'),
+      'Dostava: ' + q.get('delivery'),
+      'Oprema: ' + (q.get('extras') || '-'),
+      'Ukupno: ' + q.get('total') + ' EUR',
+    ].join('\n');
+
+    var link = document.getElementById('mailto');
+    if (link) {
+      link.href =
+        'mailto:' + email +
+        '?subject=' + encodeURIComponent('Rezervacija: ' + q.get('bike')) +
+        '&body=' + encodeURIComponent(body);
+    }
+  })();
+</script>

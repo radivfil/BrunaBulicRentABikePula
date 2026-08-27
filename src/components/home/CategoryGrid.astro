@@ -1,0 +1,79 @@
+---
+import { Image } from 'astro:assets';
+import type { CollectionEntry } from 'astro:content';
+import { path, type Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale; bikes: CollectionEntry<'bikes'>[] }
+const { lang, bikes } = Astro.props;
+const t = useT(lang);
+
+const CATEGORIES = ['e-bike', 'mtb', 'city', 'kids', 'racing'] as const;
+
+// Za svaku kategoriju: najniža dnevna cijena, broj modela i slika
+// reprezentativnog modela — sve izvedeno iz kolekcije, ništa ručno.
+const cards = CATEGORIES.map((cat) => {
+  const inCat = bikes.filter((b) => b.data.category === cat);
+  const lead = inCat.find((b) => b.data.featured) ?? inCat[0]!;
+  return {
+    cat,
+    count: inCat.length,
+    fromPrice: Math.min(...inCat.map((b) => b.data.pricing.d14)),
+    image: lead.data.image,
+    alt: lead.data.imageAlt[lang]!,
+  };
+});
+---
+
+<section class="bg-limestone-100 py-20 sm:py-28">
+  <div class="u-container">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p class="u-eyebrow">{t('catalog.title')}</p>
+        <h2 class="u-h2 mt-3 max-w-xl font-display font-semibold">{t('catalog.lead')}</h2>
+      </div>
+      <a
+        href={path(lang, 'bikes')}
+        class="rounded-sm border border-olive-700 px-5 py-3 text-sm font-semibold text-olive-700 transition-colors hover:bg-olive-700 hover:text-limestone-50"
+      >
+        {t('catalog.all')}
+      </a>
+    </div>
+
+    {/*
+      Prva kartica je namjerno dvostruko šira na desktopu. Ravnomjerna
+      mreža od pet jednakih kutija čita se kao izbornik; asimetrija
+      govori posjetitelju gdje da počne. E-bike je i najprofitabilniji.
+    */}
+    <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      {cards.map((c, i) => (
+        <li class:list={['u-reveal', i === 0 && 'sm:col-span-2']}>
+          <a
+            href={`${path(lang, 'bikes')}?kategorija=${c.cat}`}
+            class="group relative flex h-full min-h-56 flex-col justify-end overflow-hidden rounded-md border border-limestone-200 bg-limestone-50 p-6 transition-shadow duration-300 hover:shadow-lift"
+          >
+            <Image
+              src={c.image}
+              alt=""
+              widths={[240, 420]}
+              sizes="20rem"
+              loading="lazy"
+              aria-hidden="true"
+              class:list={[
+                'cutout pointer-events-none absolute -right-6 -top-2 w-40 opacity-90 transition-transform duration-500 ease-[var(--ease-out-quint)] group-hover:-translate-y-1 group-hover:scale-105',
+                i === 0 && 'w-64 sm:-right-4',
+              ]}
+            />
+            <h3 class="relative font-display text-2xl font-semibold text-olive-900">
+              {t(`cat.${c.cat}` as never)}
+            </h3>
+            <p class="relative mt-1 max-w-56 text-sm text-ink-muted">{t(`cat.${c.cat}.desc` as never)}</p>
+            <p class="relative mt-4 text-sm font-semibold text-terracotta-600">
+              {c.count} {t('catalog.results')} · {t('catalog.from')} {c.fromPrice} €{t('catalog.perDay')}
+            </p>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>

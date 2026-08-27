@@ -1,0 +1,82 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection } from 'astro:content';
+import PageHeader from './PageHeader.astro';
+import CtaBand from '../site/CtaBand.astro';
+import { path, type Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const t = useT(lang);
+
+const tours = (await getCollection('tours')).sort((a, b) => a.data.order - b.data.order);
+const anyDraft = tours.some((tr) => tr.data.isDraft);
+---
+
+<PageHeader lang={lang} routeKey="tours" title={t('tours.title')} lead={t('tours.lead')}>
+  {anyDraft && (
+    <p class="mt-6 max-w-2xl rounded-sm border border-sand-500/50 bg-sand-500/10 px-4 py-3 text-sm text-ink-soft">
+      {t('tours.draft')}
+    </p>
+  )}
+</PageHeader>
+
+<div class="u-container py-16">
+  <ul class="space-y-8">
+    {tours.map((tour, i) => {
+      const d = tour.data;
+      const copy = d.i18n[lang]!;
+      return (
+        <li class="u-reveal">
+          <a
+            href={path(lang, 'tours', tour.id)}
+            class="group grid overflow-hidden rounded-lg border border-limestone-200 bg-limestone-100 transition-shadow duration-300 hover:shadow-lift lg:grid-cols-2"
+          >
+            <div class="relative overflow-hidden">
+              <Image
+                src={d.image}
+                alt={d.imageAlt[lang]!}
+                widths={[480, 720, 1040]}
+                sizes="(min-width: 1024px) 36rem, 92vw"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                class="aspect-[16/10] h-full w-full object-cover transition-transform duration-500 ease-[var(--ease-out-quint)] group-hover:scale-105"
+              />
+              <span class="absolute left-4 top-4 rounded-xs bg-olive-900/85 px-2.5 py-1 text-[0.6875rem] font-semibold tracking-wide text-limestone-100 uppercase">
+                {t(`difficulty.${d.difficulty}` as never)}
+              </span>
+            </div>
+
+            <div class="flex flex-col justify-center p-7 sm:p-10">
+              <p class="u-eyebrow">{t(`cat.${d.bikeCategory}` as never)}</p>
+              <h2 class="u-h3 mt-3 font-display font-semibold">{copy.name}</h2>
+              <p class="mt-1 text-sm text-ink-muted">{copy.tagline}</p>
+              <p class="mt-4 leading-relaxed text-ink-soft">{copy.description}</p>
+
+              <dl class="mt-6 flex flex-wrap gap-x-8 gap-y-3 border-t border-limestone-200 pt-5 text-sm">
+                <div>
+                  <dt class="text-xs text-ink-muted">{t('tours.distance')}</dt>
+                  <dd class="font-display text-lg font-semibold text-olive-900">{d.distanceKm} km</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-ink-muted">{t('tours.ascent')}</dt>
+                  <dd class="font-display text-lg font-semibold text-olive-900">{d.ascentM} m</dd>
+                </div>
+                <div>
+                  <dt class="text-xs text-ink-muted">{t('tours.duration')}</dt>
+                  <dd class="font-display text-lg font-semibold text-olive-900">{d.durationH} h</dd>
+                </div>
+                <div class="ml-auto text-right">
+                  <dt class="text-xs text-ink-muted">{t('tours.perPerson')}</dt>
+                  <dd class="font-display text-lg font-semibold text-terracotta-600">{d.pricePerPerson} €</dd>
+                </div>
+              </dl>
+            </div>
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+</div>
+
+<CtaBand lang={lang} />

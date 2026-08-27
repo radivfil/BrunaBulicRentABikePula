@@ -1,0 +1,31 @@
+---
+import { BUSINESS } from '../../data/site.mjs';
+import { path, type Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const t = useT(lang);
+---
+
+<section class="u-container py-20 sm:py-24">
+  <div class="u-grain relative overflow-hidden rounded-lg border border-limestone-200 bg-limestone-100 px-8 py-14 text-center sm:px-14">
+    <h2 class="u-h2 mx-auto max-w-2xl font-display font-semibold">{t('cta.title')}</h2>
+    <p class="u-lead mx-auto mt-4 max-w-xl text-ink-soft">{t('cta.lead')}</p>
+
+    <div class="mt-9 flex flex-wrap justify-center gap-3">
+      <a
+        href={`tel:${BUSINESS.phoneHref}`}
+        class="rounded-sm bg-olive-700 px-6 py-3.5 text-sm font-semibold text-limestone-50 transition-colors hover:bg-olive-900"
+      >
+        {t('cta.call')} · {BUSINESS.phone}
+      </a>
+      <a
+        href={path(lang, 'contact')}
+        class="rounded-sm border border-olive-700 px-6 py-3.5 text-sm font-semibold text-olive-700 transition-colors hover:bg-olive-700 hover:text-limestone-50"
+      >
+        {t('cta.write')}
+      </a>
+    </div>
+  </div>
+</section>

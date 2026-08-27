@@ -1,0 +1,93 @@
+---
+import { Picture } from 'astro:assets';
+import heroImg from '../../assets/site/banner2.jpg';
+import { path, type Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale; bikeCount: number }
+const { lang, bikeCount } = Astro.props;
+const t = useT(lang);
+
+const heroAlt: Record<Locale, string> = {
+  hr: 'Brdski bicikl u suhoj travi iznad mora kod Premanture, u pozadini svjetionik',
+  en: 'A mountain bike in dry grass above the sea near Premantura, a lighthouse in the distance',
+  de: 'Ein Mountainbike im trockenen Gras über dem Meer bei Premantura, dahinter ein Leuchtturm',
+  it: 'Una mountain bike nell’erba secca sopra il mare vicino a Premantura, sullo sfondo un faro',
+};
+---
+
+<section class="relative overflow-hidden bg-olive-900">
+  {/*
+    LCP element, pa dobiva sve: eager, fetchpriority=high, bez lijenog
+    učitavanja. AVIF s WebP fallbackom i quality 52 — original je
+    pretjerano HDR-ana fotografija koja se u WebP-u pri istoj kvaliteti
+    penje preko 400 kB, a to je pola sekunde na 4G vezi. Artefakti se na
+    ovoj teksturi trave ionako ne vide, a preko slike ide i prekrivač.
+  */}
+  <Picture
+    src={heroImg}
+    alt={heroAlt[lang]}
+    formats={['avif']}
+    fallbackFormat="webp"
+    widths={[640, 960, 1440, 1920]}
+    sizes="100vw"
+    loading="eager"
+    fetchpriority="high"
+    quality={52}
+    class="absolute inset-0 z-0 h-full w-full object-cover object-[62%_38%]"
+  />
+  {/*
+    Dva sloja, ne jedan. Prvi je blagi ton preko cijele slike koji
+    smiruje pretjerani HDR originala; drugi je gradijent samo s lijeve
+    strane, točno ispod teksta, gdje treba kontrast. Tako fotografija
+    ostaje vidljiva desno, a naslov je čitljiv lijevo — jedan ravnomjeran
+    prekrivač od 90 % ubio bi i jedno i drugo.
+  */}
+  <div class="absolute inset-0 z-[1] bg-olive-900/45"></div>
+  <div class="absolute inset-0 z-[1] bg-gradient-to-r from-olive-900 via-olive-900/70 to-olive-900/10"></div>
+  <div class="absolute inset-x-0 bottom-0 z-[1] h-48 bg-gradient-to-t from-limestone-50 via-limestone-50/35 to-transparent"></div>
+
+  <div class="u-container relative z-10 flex min-h-[clamp(32rem,78svh,44rem)] flex-col justify-center py-24">
+    <p class="u-eyebrow text-terracotta-400">{t('hero.eyebrow')}</p>
+
+    <h1 class="u-h1 mt-5 max-w-4xl font-display font-semibold text-limestone-50">
+      {t('hero.title')}<br />
+      <span class="text-terracotta-400">{t('hero.titleAccent')}</span>
+    </h1>
+
+    <p class="u-lead mt-6 max-w-2xl text-limestone-200">{t('hero.lead')}</p>
+
+    <div class="mt-9 flex flex-wrap gap-3">
+      <a
+        href={path(lang, 'bikes')}
+        class="rounded-sm bg-terracotta-600 px-6 py-3.5 text-sm font-semibold text-limestone-50 shadow-lift transition-[background-color,transform] duration-200 hover:-translate-y-0.5 hover:bg-terracotta-700"
+      >
+        {t('hero.cta')}
+      </a>
+      <a
+        href={`${path(lang, 'bikes')}#katalog`}
+        class="rounded-sm border border-limestone-200/40 bg-limestone-50/10 px-6 py-3.5 text-sm font-semibold text-limestone-50 backdrop-blur-sm transition-colors hover:bg-limestone-50/20"
+      >
+        {t('hero.ctaSecondary')}
+      </a>
+    </div>
+
+    <dl class="mt-14 flex flex-wrap gap-x-12 gap-y-6 border-t border-limestone-200/20 pt-8">
+      <div>
+        <dt class="sr-only">{t('hero.stat2')}</dt>
+        <dd class="font-display text-3xl font-semibold text-limestone-50">{bikeCount}</dd>
+        <p class="mt-1 text-xs tracking-wide text-limestone-300 uppercase">{t('hero.stat2')}</p>
+      </div>
+      <div>
+        <dt class="sr-only">{t('hero.stat1')}</dt>
+        <dd class="font-display text-3xl font-semibold text-limestone-50">25+</dd>
+        <p class="mt-1 text-xs tracking-wide text-limestone-300 uppercase">{t('hero.stat1')}</p>
+      </div>
+      <div>
+        <dt class="sr-only">{t('hero.stat3')}</dt>
+        <dd class="font-display text-3xl font-semibold text-limestone-50">60 km</dd>
+        <p class="mt-1 text-xs tracking-wide text-limestone-300 uppercase">{t('hero.stat3')}</p>
+      </div>
+    </dl>
+  </div>
+</section>

@@ -1,0 +1,93 @@
+---
+import '../styles/global.css';
+import Header from '../components/site/Header.astro';
+import Footer from '../components/site/Footer.astro';
+import { LOCALE_META, SITE_URL } from '../data/site.mjs';
+import { alternates, defaultLocale, type Locale, type RouteKey } from '../i18n/routes';
+import { useT } from '../i18n/ui';
+import { localBusiness } from '../lib/schema';
+import { withBase } from '../lib/url';
+
+interface Props {
+  lang: Locale;
+  title: string;
+  description: string;
+  /** Ključ rute + slug — iz njih se izvode canonical i sve hreflang veze. */
+  routeKey: RouteKey;
+  slug?: string;
+  ogImage?: string;
+  /** Dodatni schema.org čvorovi koji se spajaju u isti @graph. */
+  schema?: unknown[];
+  noindex?: boolean;
+}
+
+const { lang, title, description, routeKey, slug, ogImage, schema = [], noindex = false } = Astro.props;
+
+const t = useT(lang);
+const meta = LOCALE_META[lang];
+const links = alternates(routeKey, slug);
+const canonical = new URL(links.find((l) => l.locale === lang)!.href, SITE_URL).href;
+const ogUrl = new URL(ogImage ?? '/og-default.jpg', SITE_URL).href;
+
+// Jedan <script type="application/ld+json"> po stranici, ne pet.
+// Povezani @id-evi u jednom @graph-u su ono što Google zapravo voli.
+const graph = {
+  '@context': 'https://schema.org',
+  '@graph': [localBusiness(), ...schema],
+};
+---
+
+<!doctype html>
+<html lang={meta.htmlLang} dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {(noindex || import.meta.env.PUBLIC_DEMO === "1") && <meta name="robots" content="noindex, nofollow" />}
+
+    {/* Fontovi se preloadaju prije CSS-a — inače browser za njih sazna tek
+        nakon parsiranja stila i LCP naslov kasni cijeli round-trip. */}
+    <link rel="preload" href={withBase("/fonts/fraunces-latin.woff2")} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={withBase("/fonts/inter-latin.woff2")} as="font" type="font/woff2" crossorigin />
+
+    {links.map((l) => (
+      <link rel="alternate" hreflang={LOCALE_META[l.locale].htmlLang} href={new URL(l.href, SITE_URL).href} />
+    ))}
+    <link
+      rel="alternate"
+      hreflang="x-default"
+      href={new URL(links.find((l) => l.locale === defaultLocale)!.href, SITE_URL).href}
+    />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Rent a Bike Pula" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={ogUrl} />
+    <meta property="og:locale" content={meta.ogLocale} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#3f4a2e" />
+    <link rel="icon" href={withBase("/favicon.svg")} type="image/svg+xml" />
+
+    <script type="application/ld+json" is:inline set:html={JSON.stringify(graph)} />
+  </head>
+
+  <body>
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-sm focus:bg-olive-700 focus:px-4 focus:py-2 focus:text-limestone-50">
+      {t('nav.skip')}
+    </a>
+
+    <Header lang={lang} routeKey={routeKey} slug={slug} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <Footer lang={lang} />
+  </body>
+</html>

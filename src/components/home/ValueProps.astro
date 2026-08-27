@@ -1,0 +1,37 @@
+---
+import type { Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale }
+const { lang } = Astro.props;
+const t = useT(lang);
+
+const items = [1, 2, 3, 4] as const;
+
+// Ikone su inline SVG, ne icon font i ne biblioteka — četiri putanje
+// koje ionako idu u isti HTML dokument.
+const icons: Record<number, string> = {
+  1: 'M12 3v3m0 12v3m9-9h-3M6 12H3m14.5-6.5-2.1 2.1M8.6 15.4l-2.1 2.1m0-11.9 2.1 2.1m6.8 6.8 2.1 2.1M16 12a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z',
+  2: 'M4 8h16M6 8V6a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v2m-2 0v10a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V8',
+  3: 'M3 16V8a1 1 0 0 1 1-1h9v9H3Zm10-6h4l4 4v2h-8V10ZM7.5 19a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Zm10 0a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z',
+  4: 'M9 20 3 17V4l6 3m0 13 6-3m-6 3V7m6 10 6 3V7l-6-3m0 13V4m0 0L9 7',
+};
+---
+
+<section class="u-container py-20 sm:py-28">
+  <h2 class="u-h2 max-w-2xl font-display font-semibold">{t('value.title')}</h2>
+
+  <ul class="mt-12 grid gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
+    {items.map((n) => (
+      <li class="u-reveal">
+        <span class="flex h-12 w-12 items-center justify-center rounded-md bg-olive-100 text-olive-700">
+          <svg viewBox="0 0 24 24" class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true">
+            <path d={icons[n]} stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+        <h3 class="mt-5 font-display text-lg font-semibold">{t(`value.${n}.title` as never)}</h3>
+        <p class="mt-2 text-sm leading-relaxed text-ink-soft">{t(`value.${n}.text` as never)}</p>
+      </li>
+    ))}
+  </ul>
+</section>

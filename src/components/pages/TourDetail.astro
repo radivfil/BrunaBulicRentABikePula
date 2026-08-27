@@ -1,0 +1,122 @@
+---
+import { Image } from 'astro:assets';
+import { getEntry } from 'astro:content';
+import CtaBand from '../site/CtaBand.astro';
+import { BUSINESS } from '../../data/site.mjs';
+import { path, type Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale; id: string }
+const { lang, id } = Astro.props;
+const t = useT(lang);
+
+const tour = (await getEntry('tours', id))!;
+const d = tour.data;
+const copy = d.i18n[lang]!;
+
+const facts = [
+  [t('tours.distance'), `${d.distanceKm} km`],
+  [t('tours.ascent'), `${d.ascentM} m`],
+  [t('tours.duration'), `${d.durationH} h`],
+  [t('tours.difficulty'), t(`difficulty.${d.difficulty}` as never)],
+  [t('tours.minPeople'), `${d.minPeople} ${t('tours.people')}`],
+  [t('tours.start'), d.startPoint],
+];
+
+const subject = encodeURIComponent(`${copy.name} — ${t('tours.book')}`);
+---
+
+<article>
+  <header class="relative overflow-hidden bg-olive-900">
+    <Image
+      src={d.image}
+      alt={d.imageAlt[lang]!}
+      widths={[720, 1200, 1920]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
+      class="absolute inset-0 z-0 h-full w-full object-cover"
+    />
+    <div class="absolute inset-0 z-[1] bg-gradient-to-t from-olive-900 via-olive-900/65 to-olive-900/25"></div>
+
+    <div class="u-container relative z-10 flex min-h-[26rem] flex-col justify-end py-14">
+      <nav aria-label="Breadcrumb" class="text-xs text-limestone-300">
+        <a href={path(lang, 'tours')} class="underline-offset-4 hover:text-terracotta-400 hover:underline">
+          ← {t('tours.title')}
+        </a>
+      </nav>
+      <p class="u-eyebrow mt-4 text-terracotta-400">{t(`difficulty.${d.difficulty}` as never)} · {t(`cat.${d.bikeCategory}` as never)}</p>
+      <h1 class="u-h2 mt-3 max-w-3xl font-display font-semibold text-limestone-50">{copy.name}</h1>
+      <p class="u-lead mt-3 max-w-2xl text-limestone-200">{copy.tagline}</p>
+    </div>
+  </header>
+
+  {d.isDraft && (
+    <p class="u-container mt-8 rounded-sm border border-sand-500/50 bg-sand-500/10 px-4 py-3 text-sm text-ink-soft">
+      {t('tours.draft')}
+    </p>
+  )}
+
+  <div class="u-container grid gap-12 py-14 lg:grid-cols-12 lg:gap-16">
+    <div class="lg:col-span-7">
+      <p class="u-lead leading-relaxed text-ink-soft">{copy.description}</p>
+
+      <ul class="mt-8 space-y-2">
+        {copy.highlights.map((h) => (
+          <li class="flex gap-2.5 text-ink-soft">
+            <svg viewBox="0 0 16 16" class="mt-1 h-4 w-4 shrink-0 text-terracotta-600" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="m3 8.5 3.5 3.5L13 5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            {h}
+          </li>
+        ))}
+      </ul>
+
+      <h2 class="u-h3 mt-12 font-display font-semibold">{t('tours.includes')}</h2>
+      <ul class="mt-4 grid gap-2 sm:grid-cols-2">
+        {copy.includes.map((inc) => (
+          <li class="rounded-sm bg-olive-100 px-4 py-2.5 text-sm text-olive-900">{inc}</li>
+        ))}
+      </ul>
+    </div>
+
+    <aside class="lg:col-span-5">
+      <div class="sticky top-[calc(var(--header-h)+1.5rem)] rounded-md border border-limestone-200 bg-limestone-100 p-6 shadow-panel">
+        <p class="flex items-baseline gap-2">
+          <span class="font-display text-3xl font-semibold text-olive-900">{d.pricePerPerson} €</span>
+          <span class="text-sm text-ink-muted">{t('tours.perPerson')}</span>
+        </p>
+
+        <dl class="mt-6 space-y-3 border-t border-limestone-200 pt-5 text-sm">
+          {facts.map(([label, value]) => (
+            <div class="flex justify-between gap-4">
+              <dt class="text-ink-muted">{label}</dt>
+              <dd class="text-right font-medium">{value}</dd>
+            </div>
+          ))}
+        </dl>
+
+        {/*
+          Ture se ne rezerviraju kroz booking widget: broj polaznika,
+          termin vodiča i vrijeme polaska dogovaraju se razgovorom.
+          Lažni kalendar koji ne može ispuniti obećanje je gori od
+          jasnog poziva na kontakt.
+        */}
+        <a
+          href={`mailto:${BUSINESS.email}?subject=${subject}`}
+          class="mt-6 block w-full rounded-sm bg-terracotta-600 px-5 py-3.5 text-center text-sm font-semibold text-limestone-50 transition-colors hover:bg-terracotta-700"
+        >
+          {t('tours.book')}
+        </a>
+        <a
+          href={`tel:${BUSINESS.phoneHref}`}
+          class="mt-2 block w-full rounded-sm border border-olive-700 px-5 py-3.5 text-center text-sm font-semibold text-olive-700 transition-colors hover:bg-olive-700 hover:text-limestone-50"
+        >
+          {t('cta.call')} · {BUSINESS.phone}
+        </a>
+      </div>
+    </aside>
+  </div>
+
+  <CtaBand lang={lang} />
+</article>

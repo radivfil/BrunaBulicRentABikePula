@@ -1,0 +1,88 @@
+---
+import { getCollection, getEntry } from 'astro:content';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import BikeDetail from '../../../components/pages/BikeDetail.astro';
+import TourDetail from '../../../components/pages/TourDetail.astro';
+import { ROUTES, locales, path, type Locale } from '../../../i18n/routes';
+import { useT } from '../../../i18n/ui';
+import { bikeProduct, tourTrip, breadcrumbs } from '../../../lib/schema';
+
+export async function getStaticPaths() {
+  const bikes = await getCollection('bikes');
+  const tours = await getCollection('tours');
+
+  return locales.flatMap((lang) => [
+    ...bikes.map((b) => ({
+      params: { lang, section: ROUTES.bikes[lang], item: b.id },
+      props: { kind: 'bike' as const, id: b.id },
+    })),
+    ...tours.map((tr) => ({
+      params: { lang, section: ROUTES.tours[lang], item: tr.id },
+      props: { kind: 'tour' as const, id: tr.id },
+    })),
+  ]);
+}
+
+const lang = Astro.params.lang as Locale;
+const { kind, id } = Astro.props as { kind: 'bike' | 'tour'; id: string };
+const t = useT(lang);
+
+const routeKey = kind === 'bike' ? 'bikes' : 'tours';
+const entry = kind === 'bike' ? await getEntry('bikes', id) : await getEntry('tours', id);
+const copy = entry!.data.i18n[lang]!;
+const pageUrl = path(lang, routeKey, id);
+
+// SEO naslov: ime modela + lokalni pojam. "Apache Hupahu" sam po sebi
+// nema volumen pretraživanja; "Apache Hupahu — najam e-bicikla Pula" ima.
+const suffix = {
+  hr: kind === 'bike' ? 'najam bicikla Pula, Istra' : 'biciklistička tura Istra',
+  en: kind === 'bike' ? 'bike rental Pula, Istria' : 'cycling tour Istria',
+  de: kind === 'bike' ? 'Fahrradverleih Pula, Istrien' : 'Radtour Istrien',
+  it: kind === 'bike' ? 'noleggio bici Pola, Istria' : 'tour in bici Istria',
+}[lang];
+
+const schema =
+  kind === 'bike'
+    ? [
+        bikeProduct({
+          name: copy.name,
+          description: copy.description,
+          sku: (entry!.data as any).sku,
+          brand: (entry!.data as any).brand,
+          image: (entry!.data as any).image.src,
+          url: pageUrl,
+          lowPrice: (entry!.data as any).pricing.d14,
+          highPrice: (entry!.data as any).pricing.d1,
+          locale: lang,
+        }),
+      ]
+    : [
+        tourTrip({
+          name: copy.name,
+          description: copy.description,
+          url: pageUrl,
+          price: (entry!.data as any).pricePerPerson,
+          image: (entry!.data as any).image.src,
+          distanceKm: (entry!.data as any).distanceKm,
+        }),
+      ];
+
+schema.push(
+  breadcrumbs([
+    { name: 'Rent a Bike Pula', url: path(lang) },
+    { name: kind === 'bike' ? t('catalog.title') : t('tours.title'), url: path(lang, routeKey) },
+    { name: copy.name, url: pageUrl },
+  ])
+);
+---
+
+<BaseLayout
+  lang={lang}
+  routeKey={routeKey}
+  slug={id}
+  title={`${copy.name} — ${suffix} | Rent a Bike Pula`}
+  description={copy.description.slice(0, 158)}
+  schema={schema}
+>
+  {kind === 'bike' ? <BikeDetail lang={lang} id={id} /> : <TourDetail lang={lang} id={id} />}
+</BaseLayout>

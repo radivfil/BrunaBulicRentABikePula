@@ -1,0 +1,106 @@
+---
+import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/home/Hero.astro';
+import ValueProps from '../../components/home/ValueProps.astro';
+import CategoryGrid from '../../components/home/CategoryGrid.astro';
+import BikeCard from '../../components/catalog/BikeCard.astro';
+import CtaBand from '../../components/site/CtaBand.astro';
+import { locales, path, type Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+export function getStaticPaths() {
+  return locales.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Locale;
+const t = useT(lang);
+
+const bikes = await getCollection('bikes');
+const tours = (await getCollection('tours')).sort((a, b) => a.data.order - b.data.order);
+
+const featured = bikes
+  .filter((b) => b.data.featured)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 6);
+
+const leadTour = tours[0]!;
+---
+
+<BaseLayout
+  lang={lang}
+  routeKey="home"
+  title={t('seo.home.title')}
+  description={t('seo.home.desc')}
+>
+  <Hero lang={lang} bikeCount={bikes.length} />
+
+  <CategoryGrid lang={lang} bikes={bikes} />
+
+  <section class="u-container py-20 sm:py-28">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div>
+        <p class="u-eyebrow">{t('catalog.sort.popular')}</p>
+        <h2 class="u-h2 mt-3 font-display font-semibold">{t('product.related')}</h2>
+      </div>
+      <a href={path(lang, 'bikes')} class="text-sm font-semibold text-terracotta-600 underline-offset-4 hover:underline">
+        {t('catalog.all')} →
+      </a>
+    </div>
+
+    <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+      {featured.map((bike, i) => <BikeCard bike={bike} lang={lang} eager={i < 3} />)}
+    </div>
+  </section>
+
+  <ValueProps lang={lang} />
+
+  {/* Ture — teaser prema vodećoj turi. Sadržaj je označen kao prijedlog. */}
+  <section class="bg-adriatic-800 py-20 text-limestone-100 sm:py-28">
+    <div class="u-container grid items-center gap-12 lg:grid-cols-2">
+      <div class="u-reveal">
+        <p class="u-eyebrow text-terracotta-400">{t('tours.title')}</p>
+        <h2 class="u-h2 mt-3 font-display font-semibold text-limestone-50">
+          {leadTour.data.i18n[lang]!.name}
+        </h2>
+        <p class="u-lead mt-5 text-limestone-200">{t('tours.lead')}</p>
+
+        <dl class="mt-8 flex flex-wrap gap-x-10 gap-y-4">
+          <div>
+            <dt class="text-xs tracking-wide text-limestone-300 uppercase">{t('tours.distance')}</dt>
+            <dd class="mt-1 font-display text-2xl font-semibold text-limestone-50">{leadTour.data.distanceKm} km</dd>
+          </div>
+          <div>
+            <dt class="text-xs tracking-wide text-limestone-300 uppercase">{t('tours.ascent')}</dt>
+            <dd class="mt-1 font-display text-2xl font-semibold text-limestone-50">{leadTour.data.ascentM} m</dd>
+          </div>
+          <div>
+            <dt class="text-xs tracking-wide text-limestone-300 uppercase">{t('tours.duration')}</dt>
+            <dd class="mt-1 font-display text-2xl font-semibold text-limestone-50">{leadTour.data.durationH} h</dd>
+          </div>
+        </dl>
+
+        <a
+          href={path(lang, 'tours')}
+          class="mt-9 inline-block rounded-sm bg-terracotta-600 px-6 py-3.5 text-sm font-semibold text-limestone-50 transition-colors hover:bg-terracotta-700"
+        >
+          {t('tours.title')}
+        </a>
+      </div>
+
+      <div class="u-reveal overflow-hidden rounded-md shadow-panel">
+        <Image
+          src={leadTour.data.image}
+          alt={leadTour.data.imageAlt[lang]!}
+          widths={[480, 720, 1040]}
+          sizes="(min-width: 1024px) 34rem, 92vw"
+          loading="lazy"
+          class="aspect-[4/3] w-full object-cover"
+        />
+      </div>
+    </div>
+  </section>
+
+  <CtaBand lang={lang} />
+</BaseLayout>

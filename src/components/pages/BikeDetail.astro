@@ -1,0 +1,203 @@
+---
+import { Image } from 'astro:assets';
+import { getCollection, getEntry } from 'astro:content';
+import BikeCard from '../catalog/BikeCard.astro';
+import BookingWidget from '../../islands/BookingWidget';
+import { EXTRAS, DELIVERY_ZONES, TIERS, PRICES_ARE_DRAFT, ratePerDay, savingsPct } from '../../data/pricing';
+import { path, type Locale } from '../../i18n/routes';
+import { useT } from '../../i18n/ui';
+
+interface Props { lang: Locale; id: string }
+const { lang, id } = Astro.props;
+const t = useT(lang);
+
+const bike = (await getEntry('bikes', id))!;
+const d = bike.data;
+const copy = d.i18n[lang]!;
+
+const all = await getCollection('bikes');
+const related = all
+  .filter((b) => b.id !== id && b.data.category === d.category)
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+
+const specRows = [
+  ['product.spec.wheel', `${d.specs.wheel}″`],
+  ['product.spec.frame', d.specs.frame],
+  d.specs.gears && ['product.spec.gears', String(d.specs.gears)],
+  d.specs.suspension && ['product.spec.suspension', t(`suspension.${d.specs.suspension}` as never)],
+  d.specs.brakes && ['product.spec.brakes', d.specs.brakes],
+  d.specs.motor && ['product.spec.motor', d.specs.motor],
+  d.specs.battery && ['product.spec.battery', d.specs.battery],
+  d.specs.range && ['product.spec.range', d.specs.range],
+  d.specs.weight && ['product.spec.weight', `${d.specs.weight} kg`],
+  ['product.spec.sizes', d.specs.sizes.filter((s) => s !== 'one').join(' · ') || '—'],
+  d.specs.riderHeight && ['product.spec.height', `${d.specs.riderHeight[0]}–${d.specs.riderHeight[1]} cm`],
+].filter(Boolean) as [string, string][];
+
+// Svi tekstovi za island se pripremaju ovdje i idu kao props —
+// klijent tako nikad ne preuzme rječnik za jezike koje ne gleda.
+const bookingLabels = {
+  title: t('booking.title'), dates: t('booking.dates'), from: t('booking.from'), to: t('booking.to'),
+  pickDates: t('booking.pickDates'), pickEnd: t('booking.pickEnd'),
+  qty: t('booking.qty'), size: t('booking.size'), extras: t('booking.extras'),
+  delivery: t('booking.delivery'), summary: t('booking.summary'),
+  rental: t('booking.rental'), total: t('booking.total'),
+  deposit: t('booking.deposit'), rest: t('booking.rest'),
+  cta: t('booking.cta'), ctaInquiry: t('booking.ctaInquiry'), processing: t('booking.processing'),
+  selectFirst: t('booking.selectFirst'), minDays: t('booking.unavailable'),
+  demoNotice: t('booking.demoNotice'), groupHint: t('booking.groupHint'), error: t('booking.error'),
+  day: t('product.day'), days: t('product.days'), perDay: t('catalog.perDay'),
+  prev: t('booking.month.prev'), next: t('booking.month.next'),
+  available: t('booking.available'), left: t('booking.left'), closed: t('booking.closed'),
+  weekdays: [1, 2, 3, 4, 5, 6, 7].map((n) => t(`weekday.${n}` as never)),
+  months: Array.from({ length: 12 }, (_, i) =>
+    new Intl.DateTimeFormat(lang, { month: 'long' }).format(new Date(Date.UTC(2025, i, 1)))
+  ),
+};
+---
+
+<article>
+  <div class="u-container grid gap-10 py-10 lg:grid-cols-12 lg:gap-14 lg:py-16">
+    {/* Galerija */}
+    <div class="lg:col-span-7">
+      <nav aria-label="Breadcrumb" class="mb-5 text-xs text-ink-muted">
+        <a href={path(lang, 'bikes')} class="underline-offset-4 hover:text-terracotta-600 hover:underline">
+          ← {t('product.back')}
+        </a>
+      </nav>
+
+      <div class="u-grain overflow-hidden rounded-lg border border-limestone-200 bg-limestone-100">
+        <Image
+          src={d.image}
+          alt={d.imageAlt[lang]!}
+          widths={[480, 720, 1024]}
+          sizes="(min-width: 1024px) 44rem, 92vw"
+          loading="eager"
+          fetchpriority="high"
+          class="cutout aspect-square w-full object-contain p-8 sm:p-14"
+          style={`view-transition-name: bike-${id}`}
+        />
+      </div>
+
+      <dl class="mt-8 grid grid-cols-2 gap-x-8 gap-y-3 sm:grid-cols-3">
+        {specRows.map(([key, value]) => (
+          <div class="border-t border-limestone-200 pt-3">
+            <dt class="text-xs tracking-wide text-ink-muted uppercase">{t(key as never)}</dt>
+            <dd class="mt-1 text-sm font-medium text-ink">{value}</dd>
+          </div>
+        ))}
+      </dl>
+
+      {d.needsReview.length > 0 && (
+        <p class="mt-6 rounded-sm border border-sand-500/40 bg-sand-500/10 px-4 py-3 text-xs leading-relaxed text-ink-soft">
+          <strong>Napomena za klijenta:</strong> sljedeći podaci su procjena i traže potvrdu prije objave —
+          {' '}{d.needsReview.map((f) => t(`product.spec.${f}` as never) ?? f).join(', ')}.
+        </p>
+      )}
+    </div>
+
+    {/* Sadržaj + rezervacija */}
+    <div class="lg:col-span-5">
+      <p class="u-eyebrow">{t(`cat.${d.category}` as never)} · {d.brand}</p>
+      <h1 class="u-h2 mt-3 font-display font-semibold">{copy.name}</h1>
+      <p class="u-lead mt-2 text-ink-muted">{copy.tagline}</p>
+
+      <p class="mt-6 leading-relaxed text-ink-soft">{copy.description}</p>
+
+      <ul class="mt-6 space-y-2">
+        {copy.highlights.map((h) => (
+          <li class="flex gap-2.5 text-sm text-ink-soft">
+            <svg viewBox="0 0 16 16" class="mt-0.5 h-4 w-4 shrink-0 text-terracotta-600" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="m3 8.5 3.5 3.5L13 5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+            {h}
+          </li>
+        ))}
+      </ul>
+
+      <p class="mt-6 rounded-sm bg-olive-100 px-4 py-3 text-sm text-olive-900">
+        <strong>{t('product.included')}:</strong> {t('product.included.list')}
+      </p>
+
+      {/*
+        client:load — jedini na cijeloj stranici. Ovo je element zbog kojeg
+        stranica postoji, pa smije biti interaktivan prije nego korisnik
+        stigne skrolati do njega.
+      */}
+      <div
+        class="mt-8 lg:sticky lg:top-[calc(var(--header-h)+1.5rem)]"
+        data-booking-config
+        data-booking-mode="demo"
+        data-booking-endpoint=""
+      >
+        <BookingWidget
+          client:load
+          bikeId={id}
+          bikeName={copy.name}
+          sku={d.sku}
+          fleetSize={d.fleetSize}
+          pricing={d.pricing}
+          sizes={d.specs.sizes}
+          extras={EXTRAS.filter((e) => e.inBooking).map((e) => ({
+            id: e.id, label: e.label[lang], perDay: e.perDay, maxQty: e.maxQty,
+          }))}
+          delivery={DELIVERY_ZONES.map((z) => ({ id: z.id, label: z.label[lang], price: z.price }))}
+          summaryUrl={path(lang, 'booking')}
+          locale={lang}
+          labels={bookingLabels}
+        />
+      </div>
+    </div>
+  </div>
+
+  {/* Cjenovna matrica — indeksabilan HTML, ne PDF kao na starom webu */}
+  <section class="bg-limestone-100 py-16">
+    <div class="u-container">
+      <h2 class="u-h3 font-display font-semibold">{t('product.priceTable')}</h2>
+      <p class="mt-2 text-sm text-ink-muted">{t('product.priceNote')}</p>
+
+      <div class="mt-6 overflow-x-auto">
+        <table class="w-full min-w-[34rem] border-collapse text-sm">
+          <thead>
+            <tr class="border-b border-limestone-300 text-left">
+              {TIERS.map((tier) => (
+                <th scope="col" class="py-3 pr-4 text-xs font-semibold tracking-wide text-ink-muted uppercase">
+                  {tier.minDays}{tier.minDays >= 2 ? '+' : ''} {tier.minDays === 1 ? t('product.day') : t('product.days')}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              {TIERS.map((tier) => {
+                const rate = ratePerDay(d.pricing, tier.minDays);
+                const off = savingsPct(d.pricing, tier.minDays);
+                return (
+                  <td class="py-4 pr-4 align-top">
+                    <span class="font-display text-2xl font-semibold text-olive-900">{rate} €</span>
+                    <span class="text-xs text-ink-muted">{t('catalog.perDay')}</span>
+                    {off > 0 && <span class="mt-1 block text-xs font-semibold text-terracotta-600">−{off} %</span>}
+                  </td>
+                );
+              })}
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      {PRICES_ARE_DRAFT && (
+        <p class="mt-5 text-xs text-ink-muted">{t('prices.draftWarning')}</p>
+      )}
+    </div>
+  </section>
+
+  {related.length > 0 && (
+    <section class="u-container py-16">
+      <h2 class="u-h3 font-display font-semibold">{t('product.related')}</h2>
+      <div class="mt-8 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {related.map((b) => <BikeCard bike={b} lang={lang} />)}
+      </div>
+    </section>
+  )}
+</article>
