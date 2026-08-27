@@ -22,7 +22,7 @@ const filterLabels = {
   filters: t('catalog.filters'), all: t('catalog.all'), reset: t('catalog.reset'),
   sort: t('catalog.sort'), popular: t('catalog.sort.popular'),
   priceAsc: t('catalog.sort.priceAsc'), priceDesc: t('catalog.sort.priceDesc'),
-  results: t('catalog.results'), empty: t('catalog.empty'),
+  empty: t('catalog.empty'),
   size: t('catalog.size'), maxPrice: t('catalog.maxPrice'),
   categories: Object.fromEntries(CATEGORIES.map((c) => [c, t(`cat.${c}` as never)])),
 };
@@ -39,6 +39,7 @@ const filterLabels = {
   <CatalogFilters
     client:visible
     labels={filterLabels}
+    locale={lang}
     categories={[...CATEGORIES]}
     sizes={sizes}
     maxPrice={maxPrice}

@@ -75,7 +75,10 @@ const bookingLabels = {
           sizes="(min-width: 1024px) 44rem, 92vw"
           loading="eager"
           fetchpriority="high"
-          class="cutout aspect-square w-full object-contain p-8 sm:p-14"
+          class:list={[
+            'aspect-square w-full',
+            d.imageStyle === 'photo' ? 'object-cover' : 'cutout object-contain p-8 sm:p-14',
+          ]}
           style={`view-transition-name: bike-${id}`}
         />
       </div>

@@ -23,6 +23,7 @@ pricing:
   d7: 20
   d14: 18
 image: "../../assets/bikes/racing-alu.jpg"
+imageStyle: "photo"
 imageAlt:
   hr: "Cestovni aluminij — cestovni, aluminijski okvir, boja bijela, za najam u Puli"
   en: "Road aluminium — road bike, aluminium frame, white, for rent in Pula"

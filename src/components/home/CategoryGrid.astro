@@ -3,6 +3,7 @@ import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
 import { path, type Locale } from '../../i18n/routes';
 import { useT } from '../../i18n/ui';
+import { bikeCount } from '../../lib/plural';
 
 interface Props { lang: Locale; bikes: CollectionEntry<'bikes'>[] }
 const { lang, bikes } = Astro.props;
@@ -20,6 +21,7 @@ const cards = CATEGORIES.map((cat) => {
     count: inCat.length,
     fromPrice: Math.min(...inCat.map((b) => b.data.pricing.d14)),
     image: lead.data.image,
+    imageStyle: lead.data.imageStyle,
     alt: lead.data.imageAlt[lang]!,
   };
 });
@@ -44,33 +46,56 @@ const cards = CATEGORIES.map((cat) => {
       Prva kartica je namjerno dvostruko šira na desktopu. Ravnomjerna
       mreža od pet jednakih kutija čita se kao izbornik; asimetrija
       govori posjetitelju gdje da počne. E-bike je i najprofitabilniji.
+
+      Slika ima VLASTITI prostor u flex toku i `object-contain`, a ne
+      apsolutni položaj s negativnim odmakom: fotografije su kvadratni
+      studijski izresci 800×800, pa ih je svako izlaženje izvan okvira
+      rezalo na pola bicikla. Sada je uvijek vidljiv cijeli bicikl.
     */}
     <ul class="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
       {cards.map((c, i) => (
         <li class:list={['u-reveal', i === 0 && 'sm:col-span-2']}>
           <a
             href={`${path(lang, 'bikes')}?kategorija=${c.cat}`}
-            class="group relative flex h-full min-h-56 flex-col justify-end overflow-hidden rounded-md border border-limestone-200 bg-limestone-50 p-6 transition-shadow duration-300 hover:shadow-lift"
+            class:list={[
+              'group flex h-full flex-col rounded-md border border-limestone-200 bg-limestone-50 p-6 transition-shadow duration-300 hover:shadow-lift',
+              i === 0 && 'sm:flex-row sm:items-center sm:gap-8',
+            ]}
           >
-            <Image
-              src={c.image}
-              alt=""
-              widths={[240, 420]}
-              sizes="20rem"
-              loading="lazy"
-              aria-hidden="true"
+            <div
               class:list={[
-                'cutout pointer-events-none absolute -right-6 -top-2 w-40 opacity-90 transition-transform duration-500 ease-[var(--ease-out-quint)] group-hover:-translate-y-1 group-hover:scale-105',
-                i === 0 && 'w-64 sm:-right-4',
+                'mb-5 flex shrink-0 justify-end',
+                i === 0 && 'sm:order-2 sm:mb-0 sm:flex-1 sm:justify-center',
               ]}
-            />
-            <h3 class="relative font-display text-2xl font-semibold text-olive-900">
-              {t(`cat.${c.cat}` as never)}
-            </h3>
-            <p class="relative mt-1 max-w-56 text-sm text-ink-muted">{t(`cat.${c.cat}.desc` as never)}</p>
-            <p class="relative mt-4 text-sm font-semibold text-terracotta-600">
-              {c.count} {t('catalog.results')} · {t('catalog.from')} {c.fromPrice} €{t('catalog.perDay')}
-            </p>
+            >
+              <Image
+                src={c.image}
+                alt=""
+                widths={[256, 448]}
+                sizes={i === 0 ? '14rem' : '8rem'}
+                loading="lazy"
+                aria-hidden="true"
+                class:list={[
+                  'pointer-events-none transition-transform duration-500 ease-[var(--ease-out-quint)] group-hover:-translate-y-1 group-hover:scale-105',
+                  c.imageStyle === 'photo'
+                    ? 'rounded-sm object-cover'
+                    : 'cutout w-auto object-contain',
+                  c.imageStyle === 'photo'
+                    ? (i === 0 ? 'h-40 w-60 sm:h-56 sm:w-80' : 'h-32 w-44')
+                    : (i === 0 ? 'h-40 sm:h-56' : 'h-32'),
+                ]}
+              />
+            </div>
+
+            <div class:list={['mt-auto', i === 0 && 'sm:order-1 sm:mt-0 sm:flex-1']}>
+              <h3 class="font-display text-2xl font-semibold text-olive-900">
+                {t(`cat.${c.cat}` as never)}
+              </h3>
+              <p class="mt-1 max-w-56 text-sm text-ink-muted">{t(`cat.${c.cat}.desc` as never)}</p>
+              <p class="mt-4 text-sm font-semibold text-terracotta-600">
+                {bikeCount(c.count, lang)} · {t('catalog.from')} {c.fromPrice} €{t('catalog.perDay')}
+              </p>
+            </div>
           </a>
         </li>
       ))}

@@ -28,7 +28,10 @@ const href = path(lang, 'bikes', bike.id);
       sizes="(min-width: 1024px) 22rem, (min-width: 640px) 45vw, 90vw"
       loading={eager ? 'eager' : 'lazy'}
       fetchpriority={eager ? 'high' : 'auto'}
-      class="cutout h-full w-full object-contain p-5 transition-transform duration-500 ease-[var(--ease-out-quint)] group-hover:scale-[1.04]"
+      class:list={[
+        'h-full w-full transition-transform duration-500 ease-[var(--ease-out-quint)] group-hover:scale-[1.04]',
+        d.imageStyle === 'photo' ? 'object-cover' : 'cutout object-contain p-5',
+      ]}
       style={`view-transition-name: bike-${bike.id}`}
     />
     <span class="absolute left-3 top-3 rounded-xs bg-olive-900/85 px-2 py-1 text-[0.6875rem] font-semibold tracking-wide text-limestone-100 uppercase">

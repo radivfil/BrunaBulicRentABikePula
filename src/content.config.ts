@@ -56,6 +56,15 @@ const bikes = defineCollection({
       pricing: priceTable,
 
       image: image(),
+      /**
+       * `cutout` = studijski izrezak na bijeloj pozadini (18 od 20 slika):
+       *   renderira se s `object-contain` i mix-blend-multiply, pa se
+       *   bijela stopi s toniranom karticom.
+       * `photo`  = obicna fotografija s pozadinom (cestovni bicikli):
+       *   `object-cover` u okviru, BEZ multiplya — inace posivi.
+       * Kad klijent posalje nove fotografije, mijenja se samo ovo polje.
+       */
+      imageStyle: z.enum(['cutout', 'photo']).default('cutout'),
       imageAlt: z.record(z.enum(LOCALE_KEYS), z.string()),
 
       i18n: z.record(z.enum(LOCALE_KEYS), translated),

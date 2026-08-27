@@ -23,6 +23,7 @@ pricing:
   d7: 29
   d14: 26
 image: "../../assets/bikes/racing-carbon.jpg"
+imageStyle: "photo"
 imageAlt:
   hr: "Cestovni karbon — cestovni, karbonski okvir, boja crna, za najam u Puli"
   en: "Road carbon — road bike, carbon frame, black, for rent in Pula"

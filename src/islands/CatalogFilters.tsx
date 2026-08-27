@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'preact/hooks';
+import { BIKE_FORMS, pluralIndex, type PluralLocale } from '../lib/plural';
 
 /**
  * Filtri kataloga.
@@ -15,15 +16,15 @@ import { useEffect, useState } from 'preact/hooks';
 export interface FilterLabels {
   filters: string; all: string; reset: string; sort: string;
   popular: string; priceAsc: string; priceDesc: string;
-  results: string; empty: string; size: string; maxPrice: string;
+  empty: string; size: string; maxPrice: string;
   categories: Record<string, string>;
 }
 
-interface Props { labels: FilterLabels; categories: string[]; sizes: string[]; maxPrice: number }
+interface Props { labels: FilterLabels; categories: string[]; sizes: string[]; maxPrice: number; locale: PluralLocale }
 
 type Sort = 'popular' | 'priceAsc' | 'priceDesc';
 
-export default function CatalogFilters({ labels, categories, sizes, maxPrice }: Props) {
+export default function CatalogFilters({ labels, categories, sizes, maxPrice, locale }: Props) {
   const [cat, setCat] = useState<string>('all');
   const [size, setSize] = useState<string>('all');
   const [price, setPrice] = useState<number>(maxPrice);
@@ -131,7 +132,7 @@ export default function CatalogFilters({ labels, categories, sizes, maxPrice }: 
           </label>
 
           <p class="text-sm text-ink-muted" aria-live="polite">
-            {count === null ? '' : count === 0 ? labels.empty : `${count} ${labels.results}`}
+            {count === null ? '' : count === 0 ? labels.empty : `${count} ${BIKE_FORMS[locale][pluralIndex(count, locale)]}`}
           </p>
         </div>
       </div>
