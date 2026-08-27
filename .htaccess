@@ -1,0 +1,178 @@
+# ─────────────────────────────────────────────────────────────
+# Rent a Bike Pula — Apache konfiguracija
+# Generirano; ne uređivati ručno bez usklađivanja s i18n/routes.ts
+# ─────────────────────────────────────────────────────────────
+
+Options -Indexes
+DirectoryIndex index.html
+
+<IfModule mod_headers.c>
+  # Slike i fontovi imaju hash u imenu — smiju se keširati godinu dana.
+  <FilesMatch "\.(avif|webp|jpg|jpeg|png|svg|woff2)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  # HTML se mijenja pri svakom deployu — uvijek provjeri kod servera.
+  <FilesMatch "\.html$">
+    Header set Cache-Control "public, max-age=0, must-revalidate"
+  </FilesMatch>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript application/json image/svg+xml
+</IfModule>
+
+ErrorDocument 404 /404.html
+
+# ── 301: stare .php rute ──────────────────────────────────────
+
+# HR
+Redirect 301 /hr/index.php /hr/
+Redirect 301 /hr/e-bikes.php /hr/bicikli/?kategorija=e-bike
+Redirect 301 /hr/mountain-bikes.php /hr/bicikli/?kategorija=mtb
+Redirect 301 /hr/city-bikes.php /hr/bicikli/?kategorija=city
+Redirect 301 /hr/children-bikes.php /hr/bicikli/?kategorija=kids
+Redirect 301 /hr/racing-bikes.php /hr/bicikli/?kategorija=racing
+Redirect 301 /hr/prices.php /hr/cjenik/
+Redirect 301 /hr/about.php /hr/o-nama/
+Redirect 301 /hr/contact.php /hr/kontakt/
+Redirect 301 /hr/e-bike-APACHE-HUPAHU.php /hr/bicikli/apache-hupahu/
+Redirect 301 /hr/e-bike-APACHE-TUWAN.php /hr/bicikli/apache-tuwan/
+Redirect 301 /hr/e-bike-APACHE-YAMKA.php /hr/bicikli/apache-yamka/
+Redirect 301 /hr/e-bike-CRUSSIS.php /hr/bicikli/crussis-e-cross/
+Redirect 301 /hr/e-bike-VENDA-VAM.php /hr/bicikli/venda-vam-grand-touring/
+Redirect 301 /hr/bike-mtb-29-brb-standard-grey.php /hr/bicikli/mtb-29-stratos-grey/
+Redirect 301 /hr/bike-mtb-29-brb-standard-black.php /hr/bicikli/mtb-29-stratos-black/
+Redirect 301 /hr/bike-mtb-29-brb-seattle-hardtail-basic.php /hr/bicikli/mtb-29-seattle-hardtail/
+Redirect 301 /hr/bike-mtb-26-brb-hardtail-standard.php /hr/bicikli/mtb-26-hardtail-standard/
+Redirect 301 /hr/bike-mtb-26-brb-hystric-fully-standard-basic-blue.php /hr/bicikli/mtb-26-hystric-fully-blue/
+Redirect 301 /hr/bike-mtb-26-brb-hystric-fully-standard-basic-red.php /hr/bicikli/mtb-26-hystric-fully-red/
+Redirect 301 /hr/bike-mtb-26-hybrid-svr-monotube-standard.php /hr/bicikli/mtb-26-hybrid-svr-monotube/
+Redirect 301 /hr/bike-ctb-28-carratt-lady-standard.php /hr/bicikli/city-28-carratt-lady/
+Redirect 301 /hr/bike-ctb-28-carratt-men-standard.php /hr/bicikli/city-28-carratt-men/
+Redirect 301 /hr/bike-children-20-4a.php /hr/bicikli/kids-torpado-20-blue/
+Redirect 301 /hr/bike-children-20-4b.php /hr/bicikli/kids-torpado-20-pink/
+Redirect 301 /hr/bike-children-24-5a.php /hr/bicikli/kids-torpado-24-blue/
+Redirect 301 /hr/bike-children-24-5b.php /hr/bicikli/kids-torpado-24-pink/
+Redirect 301 /hr/bike-racing-carbon.php /hr/bicikli/racing-carbon/
+Redirect 301 /hr/bike-racing-alu.php /hr/bicikli/racing-alu/
+Redirect 301 /hr/bike-racing-3a.php /hr/bicikli/?kategorija=racing
+
+# EN
+Redirect 301 /en/index.php /en/
+Redirect 301 /en/e-bikes.php /en/bikes/?kategorija=e-bike
+Redirect 301 /en/mountain-bikes.php /en/bikes/?kategorija=mtb
+Redirect 301 /en/city-bikes.php /en/bikes/?kategorija=city
+Redirect 301 /en/children-bikes.php /en/bikes/?kategorija=kids
+Redirect 301 /en/racing-bikes.php /en/bikes/?kategorija=racing
+Redirect 301 /en/prices.php /en/prices/
+Redirect 301 /en/about.php /en/about/
+Redirect 301 /en/contact.php /en/contact/
+Redirect 301 /en/e-bike-APACHE-HUPAHU.php /en/bikes/apache-hupahu/
+Redirect 301 /en/e-bike-APACHE-TUWAN.php /en/bikes/apache-tuwan/
+Redirect 301 /en/e-bike-APACHE-YAMKA.php /en/bikes/apache-yamka/
+Redirect 301 /en/e-bike-CRUSSIS.php /en/bikes/crussis-e-cross/
+Redirect 301 /en/e-bike-VENDA-VAM.php /en/bikes/venda-vam-grand-touring/
+Redirect 301 /en/bike-mtb-29-brb-standard-grey.php /en/bikes/mtb-29-stratos-grey/
+Redirect 301 /en/bike-mtb-29-brb-standard-black.php /en/bikes/mtb-29-stratos-black/
+Redirect 301 /en/bike-mtb-29-brb-seattle-hardtail-basic.php /en/bikes/mtb-29-seattle-hardtail/
+Redirect 301 /en/bike-mtb-26-brb-hardtail-standard.php /en/bikes/mtb-26-hardtail-standard/
+Redirect 301 /en/bike-mtb-26-brb-hystric-fully-standard-basic-blue.php /en/bikes/mtb-26-hystric-fully-blue/
+Redirect 301 /en/bike-mtb-26-brb-hystric-fully-standard-basic-red.php /en/bikes/mtb-26-hystric-fully-red/
+Redirect 301 /en/bike-mtb-26-hybrid-svr-monotube-standard.php /en/bikes/mtb-26-hybrid-svr-monotube/
+Redirect 301 /en/bike-ctb-28-carratt-lady-standard.php /en/bikes/city-28-carratt-lady/
+Redirect 301 /en/bike-ctb-28-carratt-men-standard.php /en/bikes/city-28-carratt-men/
+Redirect 301 /en/bike-children-20-4a.php /en/bikes/kids-torpado-20-blue/
+Redirect 301 /en/bike-children-20-4b.php /en/bikes/kids-torpado-20-pink/
+Redirect 301 /en/bike-children-24-5a.php /en/bikes/kids-torpado-24-blue/
+Redirect 301 /en/bike-children-24-5b.php /en/bikes/kids-torpado-24-pink/
+Redirect 301 /en/bike-racing-carbon.php /en/bikes/racing-carbon/
+Redirect 301 /en/bike-racing-alu.php /en/bikes/racing-alu/
+Redirect 301 /en/bike-racing-3a.php /en/bikes/?kategorija=racing
+
+# DE
+Redirect 301 /de/index.php /de/
+Redirect 301 /de/e-bikes.php /de/fahrraeder/?kategorija=e-bike
+Redirect 301 /de/mountain-bikes.php /de/fahrraeder/?kategorija=mtb
+Redirect 301 /de/city-bikes.php /de/fahrraeder/?kategorija=city
+Redirect 301 /de/children-bikes.php /de/fahrraeder/?kategorija=kids
+Redirect 301 /de/racing-bikes.php /de/fahrraeder/?kategorija=racing
+Redirect 301 /de/prices.php /de/preise/
+Redirect 301 /de/about.php /de/ueber-uns/
+Redirect 301 /de/contact.php /de/kontakt/
+Redirect 301 /de/e-bike-APACHE-HUPAHU.php /de/fahrraeder/apache-hupahu/
+Redirect 301 /de/e-bike-APACHE-TUWAN.php /de/fahrraeder/apache-tuwan/
+Redirect 301 /de/e-bike-APACHE-YAMKA.php /de/fahrraeder/apache-yamka/
+Redirect 301 /de/e-bike-CRUSSIS.php /de/fahrraeder/crussis-e-cross/
+Redirect 301 /de/e-bike-VENDA-VAM.php /de/fahrraeder/venda-vam-grand-touring/
+Redirect 301 /de/bike-mtb-29-brb-standard-grey.php /de/fahrraeder/mtb-29-stratos-grey/
+Redirect 301 /de/bike-mtb-29-brb-standard-black.php /de/fahrraeder/mtb-29-stratos-black/
+Redirect 301 /de/bike-mtb-29-brb-seattle-hardtail-basic.php /de/fahrraeder/mtb-29-seattle-hardtail/
+Redirect 301 /de/bike-mtb-26-brb-hardtail-standard.php /de/fahrraeder/mtb-26-hardtail-standard/
+Redirect 301 /de/bike-mtb-26-brb-hystric-fully-standard-basic-blue.php /de/fahrraeder/mtb-26-hystric-fully-blue/
+Redirect 301 /de/bike-mtb-26-brb-hystric-fully-standard-basic-red.php /de/fahrraeder/mtb-26-hystric-fully-red/
+Redirect 301 /de/bike-mtb-26-hybrid-svr-monotube-standard.php /de/fahrraeder/mtb-26-hybrid-svr-monotube/
+Redirect 301 /de/bike-ctb-28-carratt-lady-standard.php /de/fahrraeder/city-28-carratt-lady/
+Redirect 301 /de/bike-ctb-28-carratt-men-standard.php /de/fahrraeder/city-28-carratt-men/
+Redirect 301 /de/bike-children-20-4a.php /de/fahrraeder/kids-torpado-20-blue/
+Redirect 301 /de/bike-children-20-4b.php /de/fahrraeder/kids-torpado-20-pink/
+Redirect 301 /de/bike-children-24-5a.php /de/fahrraeder/kids-torpado-24-blue/
+Redirect 301 /de/bike-children-24-5b.php /de/fahrraeder/kids-torpado-24-pink/
+Redirect 301 /de/bike-racing-carbon.php /de/fahrraeder/racing-carbon/
+Redirect 301 /de/bike-racing-alu.php /de/fahrraeder/racing-alu/
+Redirect 301 /de/bike-racing-3a.php /de/fahrraeder/?kategorija=racing
+
+# IT
+Redirect 301 /it/index.php /it/
+Redirect 301 /it/e-bikes.php /it/biciclette/?kategorija=e-bike
+Redirect 301 /it/mountain-bikes.php /it/biciclette/?kategorija=mtb
+Redirect 301 /it/city-bikes.php /it/biciclette/?kategorija=city
+Redirect 301 /it/children-bikes.php /it/biciclette/?kategorija=kids
+Redirect 301 /it/racing-bikes.php /it/biciclette/?kategorija=racing
+Redirect 301 /it/prices.php /it/prezzi/
+Redirect 301 /it/about.php /it/chi-siamo/
+Redirect 301 /it/contact.php /it/contatti/
+Redirect 301 /it/e-bike-APACHE-HUPAHU.php /it/biciclette/apache-hupahu/
+Redirect 301 /it/e-bike-APACHE-TUWAN.php /it/biciclette/apache-tuwan/
+Redirect 301 /it/e-bike-APACHE-YAMKA.php /it/biciclette/apache-yamka/
+Redirect 301 /it/e-bike-CRUSSIS.php /it/biciclette/crussis-e-cross/
+Redirect 301 /it/e-bike-VENDA-VAM.php /it/biciclette/venda-vam-grand-touring/
+Redirect 301 /it/bike-mtb-29-brb-standard-grey.php /it/biciclette/mtb-29-stratos-grey/
+Redirect 301 /it/bike-mtb-29-brb-standard-black.php /it/biciclette/mtb-29-stratos-black/
+Redirect 301 /it/bike-mtb-29-brb-seattle-hardtail-basic.php /it/biciclette/mtb-29-seattle-hardtail/
+Redirect 301 /it/bike-mtb-26-brb-hardtail-standard.php /it/biciclette/mtb-26-hardtail-standard/
+Redirect 301 /it/bike-mtb-26-brb-hystric-fully-standard-basic-blue.php /it/biciclette/mtb-26-hystric-fully-blue/
+Redirect 301 /it/bike-mtb-26-brb-hystric-fully-standard-basic-red.php /it/biciclette/mtb-26-hystric-fully-red/
+Redirect 301 /it/bike-mtb-26-hybrid-svr-monotube-standard.php /it/biciclette/mtb-26-hybrid-svr-monotube/
+Redirect 301 /it/bike-ctb-28-carratt-lady-standard.php /it/biciclette/city-28-carratt-lady/
+Redirect 301 /it/bike-ctb-28-carratt-men-standard.php /it/biciclette/city-28-carratt-men/
+Redirect 301 /it/bike-children-20-4a.php /it/biciclette/kids-torpado-20-blue/
+Redirect 301 /it/bike-children-20-4b.php /it/biciclette/kids-torpado-20-pink/
+Redirect 301 /it/bike-children-24-5a.php /it/biciclette/kids-torpado-24-blue/
+Redirect 301 /it/bike-children-24-5b.php /it/biciclette/kids-torpado-24-pink/
+Redirect 301 /it/bike-racing-carbon.php /it/biciclette/racing-carbon/
+Redirect 301 /it/bike-racing-alu.php /it/biciclette/racing-alu/
+Redirect 301 /it/bike-racing-3a.php /it/biciclette/?kategorija=racing
+
+# ── Ukinuti jezici → engleski ─────────────────────────────────
+RedirectMatch 301 ^/es/(.*)$ /en/
+RedirectMatch 301 ^/fr/(.*)$ /en/
+RedirectMatch 301 ^/nl/(.*)$ /en/
+
+# ── Korijen i ostaci predloška ────────────────────────────────
+Redirect 301 /index.php /
+Redirect 301 /casuals.html /
+Redirect 301 /cosmetics.html /
+Redirect 301 /deos.html /
+Redirect 301 /formals.html /
+Redirect 301 /haircare.html /
+Redirect 301 /handbags.html /
+Redirect 301 /inner.html /
+Redirect 301 /jewellery.html /
+Redirect 301 /night.html /
+Redirect 301 /shoes.html /
+Redirect 301 /skincare.html /
+Redirect 301 /watches.html /
+Redirect 301 /women.html /
+Redirect 301 /single.html /

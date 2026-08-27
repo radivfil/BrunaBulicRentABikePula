@@ -1,0 +1,10 @@
+User-agent: *
+Allow: /
+
+# Sažetak rezervacije nosi parametre narudžbe u URL-u — ne u indeks.
+Disallow: /*/rezervacija/
+Disallow: /*/booking/
+Disallow: /*/buchung/
+Disallow: /*/prenotazione/
+
+Sitemap: https://rentabikepula.com/sitemap-index.xml

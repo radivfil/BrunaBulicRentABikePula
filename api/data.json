@@ -1,0 +1,379 @@
+{
+  "generatedAt": "2026-08-27T23:55:43.247Z",
+  "currency": "eur",
+  "depositPct": 30,
+  "tiers": [
+    {
+      "key": "d1",
+      "minDays": 1
+    },
+    {
+      "key": "d2",
+      "minDays": 2
+    },
+    {
+      "key": "d4",
+      "minDays": 4
+    },
+    {
+      "key": "d7",
+      "minDays": 7
+    },
+    {
+      "key": "d14",
+      "minDays": 14
+    }
+  ],
+  "bikes": {
+    "apache-hupahu": {
+      "sku": "EB-APA-HUPAHU",
+      "fleetSize": 4,
+      "pricing": {
+        "d1": 35,
+        "d2": 32,
+        "d4": 29,
+        "d7": 26,
+        "d14": 23
+      }
+    },
+    "apache-tuwan": {
+      "sku": "EB-APA-TUWAN",
+      "fleetSize": 4,
+      "pricing": {
+        "d1": 35,
+        "d2": 32,
+        "d4": 29,
+        "d7": 26,
+        "d14": 23
+      }
+    },
+    "apache-yamka": {
+      "sku": "EB-APA-YAMKA",
+      "fleetSize": 3,
+      "pricing": {
+        "d1": 35,
+        "d2": 32,
+        "d4": 29,
+        "d7": 26,
+        "d14": 23
+      }
+    },
+    "city-28-carratt-lady": {
+      "sku": "CTY-CAR-LADY",
+      "fleetSize": 10,
+      "pricing": {
+        "d1": 12,
+        "d2": 11,
+        "d4": 10,
+        "d7": 9,
+        "d14": 8
+      }
+    },
+    "city-28-carratt-men": {
+      "sku": "CTY-CAR-MEN",
+      "fleetSize": 10,
+      "pricing": {
+        "d1": 12,
+        "d2": 11,
+        "d4": 10,
+        "d7": 9,
+        "d14": 8
+      }
+    },
+    "crussis-e-cross": {
+      "sku": "EB-CRU-CROSS",
+      "fleetSize": 3,
+      "pricing": {
+        "d1": 33,
+        "d2": 30,
+        "d4": 27,
+        "d7": 24,
+        "d14": 22
+      }
+    },
+    "kids-torpado-20-blue": {
+      "sku": "KID-TOR-20-BL",
+      "fleetSize": 6,
+      "pricing": {
+        "d1": 9,
+        "d2": 8,
+        "d4": 7,
+        "d7": 6,
+        "d14": 6
+      }
+    },
+    "kids-torpado-20-pink": {
+      "sku": "KID-TOR-20-PK",
+      "fleetSize": 6,
+      "pricing": {
+        "d1": 9,
+        "d2": 8,
+        "d4": 7,
+        "d7": 6,
+        "d14": 6
+      }
+    },
+    "kids-torpado-24-blue": {
+      "sku": "KID-TOR-24-BL",
+      "fleetSize": 5,
+      "pricing": {
+        "d1": 10,
+        "d2": 9,
+        "d4": 8,
+        "d7": 7,
+        "d14": 6
+      }
+    },
+    "kids-torpado-24-pink": {
+      "sku": "KID-TOR-24-PK",
+      "fleetSize": 5,
+      "pricing": {
+        "d1": 10,
+        "d2": 9,
+        "d4": 8,
+        "d7": 7,
+        "d14": 6
+      }
+    },
+    "mtb-26-hardtail-standard": {
+      "sku": "MTB-BRB-26-HT",
+      "fleetSize": 8,
+      "pricing": {
+        "d1": 14,
+        "d2": 13,
+        "d4": 11,
+        "d7": 10,
+        "d14": 9
+      }
+    },
+    "mtb-26-hybrid-svr-monotube": {
+      "sku": "MTB-SVR-MONO",
+      "fleetSize": 6,
+      "pricing": {
+        "d1": 14,
+        "d2": 12,
+        "d4": 11,
+        "d7": 10,
+        "d14": 9
+      }
+    },
+    "mtb-26-hystric-fully-blue": {
+      "sku": "MTB-BRB-HYS-BL",
+      "fleetSize": 4,
+      "pricing": {
+        "d1": 16,
+        "d2": 15,
+        "d4": 13,
+        "d7": 12,
+        "d14": 11
+      }
+    },
+    "mtb-26-hystric-fully-red": {
+      "sku": "MTB-BRB-HYS-RD",
+      "fleetSize": 4,
+      "pricing": {
+        "d1": 16,
+        "d2": 15,
+        "d4": 13,
+        "d7": 12,
+        "d14": 11
+      }
+    },
+    "mtb-29-seattle-hardtail": {
+      "sku": "MTB-BRB-SEATTLE",
+      "fleetSize": 5,
+      "pricing": {
+        "d1": 16,
+        "d2": 15,
+        "d4": 13,
+        "d7": 12,
+        "d14": 11
+      }
+    },
+    "mtb-29-stratos-black": {
+      "sku": "MTB-BRB-STRAT-BK",
+      "fleetSize": 6,
+      "pricing": {
+        "d1": 18,
+        "d2": 16,
+        "d4": 14,
+        "d7": 13,
+        "d14": 12
+      }
+    },
+    "mtb-29-stratos-grey": {
+      "sku": "MTB-BRB-STRAT-GY",
+      "fleetSize": 6,
+      "pricing": {
+        "d1": 18,
+        "d2": 16,
+        "d4": 14,
+        "d7": 13,
+        "d14": 12
+      }
+    },
+    "racing-alu": {
+      "sku": "RAC-ALU",
+      "fleetSize": 3,
+      "pricing": {
+        "d1": 28,
+        "d2": 25,
+        "d4": 22,
+        "d7": 20,
+        "d14": 18
+      }
+    },
+    "racing-carbon": {
+      "sku": "RAC-CARBON",
+      "fleetSize": 2,
+      "pricing": {
+        "d1": 40,
+        "d2": 36,
+        "d4": 32,
+        "d7": 29,
+        "d14": 26
+      }
+    },
+    "venda-vam-grand-touring": {
+      "sku": "EB-VEN-VAM",
+      "fleetSize": 4,
+      "pricing": {
+        "d1": 33,
+        "d2": 30,
+        "d4": 27,
+        "d7": 24,
+        "d14": 22
+      }
+    }
+  },
+  "extras": [
+    {
+      "id": "helmet",
+      "perDay": {
+        "d1": 4,
+        "d2": 3,
+        "d4": 3,
+        "d7": 2,
+        "d14": 2
+      }
+    },
+    {
+      "id": "child-seat",
+      "perDay": {
+        "d1": 6,
+        "d2": 5,
+        "d4": 4,
+        "d7": 4,
+        "d14": 3
+      }
+    },
+    {
+      "id": "basket",
+      "perDay": {
+        "d1": 3,
+        "d2": 2,
+        "d4": 2,
+        "d7": 2,
+        "d14": 1
+      }
+    },
+    {
+      "id": "trailer",
+      "perDay": {
+        "d1": 14,
+        "d2": 12,
+        "d4": 10,
+        "d7": 9,
+        "d14": 8
+      }
+    },
+    {
+      "id": "rack",
+      "perDay": {
+        "d1": 3,
+        "d2": 2,
+        "d4": 2,
+        "d7": 2,
+        "d14": 1
+      }
+    },
+    {
+      "id": "pannier",
+      "perDay": {
+        "d1": 5,
+        "d2": 4,
+        "d4": 4,
+        "d7": 3,
+        "d14": 3
+      }
+    },
+    {
+      "id": "phone-holder",
+      "perDay": {
+        "d1": 2,
+        "d2": 2,
+        "d4": 1,
+        "d7": 1,
+        "d14": 1
+      }
+    },
+    {
+      "id": "bottle-cage",
+      "perDay": {
+        "d1": 1,
+        "d2": 1,
+        "d4": 1,
+        "d7": 1,
+        "d14": 1
+      }
+    },
+    {
+      "id": "clip-pedals",
+      "perDay": {
+        "d1": 4,
+        "d2": 3,
+        "d4": 3,
+        "d7": 2,
+        "d14": 2
+      }
+    },
+    {
+      "id": "bike-carrier",
+      "perDay": {
+        "d1": 12,
+        "d2": 10,
+        "d4": 9,
+        "d7": 8,
+        "d14": 7
+      }
+    },
+    {
+      "id": "bike-trailer",
+      "perDay": {
+        "d1": 45,
+        "d2": 40,
+        "d4": 36,
+        "d7": 32,
+        "d14": 28
+      }
+    }
+  ],
+  "delivery": [
+    {
+      "id": "pickup",
+      "price": 0
+    },
+    {
+      "id": "medulin",
+      "price": 12
+    },
+    {
+      "id": "pula",
+      "price": 15
+    },
+    {
+      "id": "istria",
+      "price": 35
+    }
+  ]
+}
