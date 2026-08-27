@@ -7,10 +7,10 @@ featured: false
 fleetSize: 5
 specs:
   wheel: "24"
-  frame: "Čelik"
+  frameMaterial: "steel"
   gears: 18
   suspension: "hardtail"
-  brakes: "V-brake"
+  brakes: "v-brake"
   sizes:
     - "one"
   riderHeight: [135, 155]

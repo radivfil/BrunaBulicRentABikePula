@@ -7,12 +7,13 @@ featured: false
 fleetSize: 3
 specs:
   wheel: "29"
-  frame: "Aluminij, sniženi okvir"
+  frameMaterial: "aluminium"
+  frameType: "lowstep"
   gears: 9
   suspension: "hardtail"
-  brakes: "Hidraulične disk"
-  motor: "Središnji, 250 W"
-  battery: "Integrirana u donjoj cijevi"
+  brakes: "hydraulic-disc"
+  motor: "mid-250"
+  battery: "integrated"
   range: "60–90 km"
   sizes:
     - "S"

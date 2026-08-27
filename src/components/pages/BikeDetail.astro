@@ -21,14 +21,24 @@ const related = all
   .sort((a, b) => a.data.order - b.data.order)
   .slice(0, 3);
 
+// Okvir se sklapa iz dvije sifre: "Aluminij, hardtail" / "Aluminium,
+// Hardtail" / "Alluminio, front". Materijal ide velikim slovom jer je
+// prvi u nizu, tip malim jer ga slijedi.
+const frameLabel = [
+  t(`spec.material.${d.specs.frameMaterial}` as never),
+  d.specs.frameType && t(`spec.frame.${d.specs.frameType}` as never),
+]
+  .filter(Boolean)
+  .join(', ');
+
 const specRows = [
   ['product.spec.wheel', `${d.specs.wheel}″`],
-  ['product.spec.frame', d.specs.frame],
+  ['product.spec.frame', frameLabel],
   d.specs.gears && ['product.spec.gears', String(d.specs.gears)],
   d.specs.suspension && ['product.spec.suspension', t(`suspension.${d.specs.suspension}` as never)],
-  d.specs.brakes && ['product.spec.brakes', d.specs.brakes],
-  d.specs.motor && ['product.spec.motor', d.specs.motor],
-  d.specs.battery && ['product.spec.battery', d.specs.battery],
+  d.specs.brakes && ['product.spec.brakes', t(`spec.brakes.${d.specs.brakes}` as never)],
+  d.specs.motor && ['product.spec.motor', t(`spec.motor.${d.specs.motor}` as never)],
+  d.specs.battery && ['product.spec.battery', t(`spec.battery.${d.specs.battery}` as never)],
   d.specs.range && ['product.spec.range', d.specs.range],
   d.specs.weight && ['product.spec.weight', `${d.specs.weight} kg`],
   ['product.spec.sizes', d.specs.sizes.filter((s) => s !== 'one').join(' · ') || '—'],
@@ -94,8 +104,8 @@ const bookingLabels = {
 
       {d.needsReview.length > 0 && (
         <p class="mt-6 rounded-sm border border-sand-500/40 bg-sand-500/10 px-4 py-3 text-xs leading-relaxed text-ink-soft">
-          <strong>Napomena za klijenta:</strong> sljedeći podaci su procjena i traže potvrdu prije objave —
-          {' '}{d.needsReview.map((f) => t(`product.spec.${f}` as never) ?? f).join(', ')}.
+          <strong>{t('product.reviewNote')}</strong>
+          {' — '}{d.needsReview.map((f) => t(`product.spec.${f}` as never) ?? f).join(', ')}.
         </p>
       )}
     </div>

@@ -40,12 +40,25 @@ const bikes = defineCollection({
 
       specs: z.object({
         wheel: z.enum(['16', '20', '24', '26', '27.5', '28', '29']),
-        frame: z.string(),
+
+        /*
+         * Ova polja su ŠIFRE, ne slobodan tekst.
+         *
+         * Prije su bila obicni stringovi ("Aluminij, hardtail"), pa su na
+         * engleskoj, njemackoj i talijanskoj stranici ostajala na
+         * hrvatskom. Kroz enum idu u i18n/ui.ts i prevode se sama.
+         * Nova vrijednost = jedan kljuc u rjecniku, ne 20 datoteka.
+         */
+        frameMaterial: z.enum(['aluminium', 'steel', 'carbon']),
+        frameType: z
+          .enum(['hardtail', 'lowstep', 'stepthrough', 'trekking', 'fully', 'monotube', 'classic'])
+          .optional(),
         gears: z.number().int().positive().optional(),
         suspension: z.enum(['rigid', 'hardtail', 'full']).optional(),
-        brakes: z.string().optional(),
-        motor: z.string().optional(),
-        battery: z.string().optional(),
+        brakes: z.enum(['hydraulic-disc', 'disc', 'v-brake', 'rim']).optional(),
+        motor: z.enum(['mid-250']).optional(),
+        battery: z.enum(['integrated']).optional(),
+        /** "60–90 km" — brojevi i jedinica, jezicno neutralno. */
         range: z.string().optional(),
         weight: z.number().optional(),
         sizes: z.array(z.enum(['XS', 'S', 'M', 'L', 'XL', 'one'])),

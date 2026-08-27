@@ -7,12 +7,13 @@ featured: false
 fleetSize: 3
 specs:
   wheel: "28"
-  frame: "Aluminij, prohodni okvir"
+  frameMaterial: "aluminium"
+  frameType: "stepthrough"
   gears: 9
   suspension: "hardtail"
-  brakes: "Hidraulične disk"
-  motor: "Središnji, 250 W"
-  battery: "Integrirana u donjoj cijevi"
+  brakes: "hydraulic-disc"
+  motor: "mid-250"
+  battery: "integrated"
   range: "70–100 km"
   sizes:
     - "S"

@@ -7,10 +7,11 @@ featured: false
 fleetSize: 8
 specs:
   wheel: "26"
-  frame: "Aluminij, hardtail"
+  frameMaterial: "aluminium"
+  frameType: "hardtail"
   gears: 21
   suspension: "hardtail"
-  brakes: "V-brake"
+  brakes: "v-brake"
   sizes:
     - "S"
     - "M"

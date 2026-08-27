@@ -7,12 +7,13 @@ featured: true
 fleetSize: 4
 specs:
   wheel: "28"
-  frame: "Aluminij, trekking"
+  frameMaterial: "aluminium"
+  frameType: "trekking"
   gears: 8
   suspension: "hardtail"
-  brakes: "Hidraulične disk"
-  motor: "Središnji, 250 W"
-  battery: "Integrirana u donjoj cijevi"
+  brakes: "hydraulic-disc"
+  motor: "mid-250"
+  battery: "integrated"
   range: "70–110 km"
   sizes:
     - "M"

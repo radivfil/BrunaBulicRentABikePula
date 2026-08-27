@@ -7,10 +7,11 @@ featured: false
 fleetSize: 10
 specs:
   wheel: "28"
-  frame: "Čelik, klasični okvir"
+  frameMaterial: "steel"
+  frameType: "classic"
   gears: 6
   suspension: "rigid"
-  brakes: "V-brake"
+  brakes: "v-brake"
   sizes:
     - "one"
   riderHeight: [170, 195]

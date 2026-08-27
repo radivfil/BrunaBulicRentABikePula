@@ -7,10 +7,11 @@ featured: false
 fleetSize: 6
 specs:
   wheel: "26"
-  frame: "Aluminij, monotube"
+  frameMaterial: "aluminium"
+  frameType: "monotube"
   gears: 18
   suspension: "hardtail"
-  brakes: "V-brake"
+  brakes: "v-brake"
   sizes:
     - "S"
     - "M"

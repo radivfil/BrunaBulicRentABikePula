@@ -7,10 +7,11 @@ featured: false
 fleetSize: 4
 specs:
   wheel: "26"
-  frame: "Aluminij, puni ovjes"
+  frameMaterial: "aluminium"
+  frameType: "fully"
   gears: 21
   suspension: "full"
-  brakes: "Disk"
+  brakes: "disc"
   sizes:
     - "M"
     - "L"

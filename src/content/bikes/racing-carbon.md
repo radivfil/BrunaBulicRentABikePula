@@ -7,10 +7,10 @@ featured: true
 fleetSize: 2
 specs:
   wheel: "28"
-  frame: "Karbon"
+  frameMaterial: "carbon"
   gears: 22
   suspension: "rigid"
-  brakes: "Disk"
+  brakes: "disc"
   weight: 8.5
   sizes:
     - "M"
@@ -23,7 +23,6 @@ pricing:
   d7: 29
   d14: 26
 image: "../../assets/bikes/racing-carbon.jpg"
-imageStyle: "photo"
 imageAlt:
   hr: "Cestovni karbon — cestovni, karbonski okvir, boja crna, za najam u Puli"
   en: "Road carbon — road bike, carbon frame, black, for rent in Pula"

@@ -7,10 +7,11 @@ featured: true
 fleetSize: 10
 specs:
   wheel: "28"
-  frame: "Čelik, prohodni okvir"
+  frameMaterial: "steel"
+  frameType: "stepthrough"
   gears: 6
   suspension: "rigid"
-  brakes: "V-brake"
+  brakes: "v-brake"
   sizes:
     - "one"
   riderHeight: [155, 180]

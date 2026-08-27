@@ -7,12 +7,13 @@ featured: true
 fleetSize: 4
 specs:
   wheel: "29"
-  frame: "Aluminij, hardtail"
+  frameMaterial: "aluminium"
+  frameType: "hardtail"
   gears: 9
   suspension: "hardtail"
-  brakes: "Hidraulične disk"
-  motor: "Središnji, 250 W"
-  battery: "Integrirana u donjoj cijevi"
+  brakes: "hydraulic-disc"
+  motor: "mid-250"
+  battery: "integrated"
   range: "60–90 km"
   sizes:
     - "M"
