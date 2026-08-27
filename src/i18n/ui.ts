@@ -19,8 +19,8 @@ const hr = {
   'nav.skip': 'Prijeđi na sadržaj',
 
   'hero.eyebrow': 'Šišan · Pula · Istra',
-  'hero.title': 'Istra se vozi polako.',
-  'hero.titleAccent': 'Mi imamo bicikl za to.',
+  'hero.title': 'Dva kotača,',
+  'hero.titleAccent': 'cijela Istra.',
   'hero.lead':
     'Obiteljski servis i najam bicikala nadomak Premanture i Kamenjaka. Preko dvadeset modela, dostava na adresu, oprema uključena — od jednog popodneva do dva tjedna.',
   'hero.cta': 'Pogledaj bicikle',
@@ -243,8 +243,8 @@ const en: Dict = {
   'nav.language': 'Language', 'nav.skip': 'Skip to content',
 
   'hero.eyebrow': 'Šišan · Pula · Istria',
-  'hero.title': 'Istria is best taken slowly.',
-  'hero.titleAccent': 'We have the bike for it.',
+  'hero.title': 'Two wheels,',
+  'hero.titleAccent': 'all of Istria.',
   'hero.lead':
     'Family-run bike workshop and rental a few minutes from Premantura and Cape Kamenjak. Twenty-plus models, delivery to your door, gear included — from one afternoon to two weeks.',
   'hero.cta': 'Browse the fleet',
@@ -402,8 +402,8 @@ const de: Dict = {
   'nav.language': 'Sprache', 'nav.skip': 'Zum Inhalt springen',
 
   'hero.eyebrow': 'Šišan · Pula · Istrien',
-  'hero.title': 'Istrien fährt man langsam.',
-  'hero.titleAccent': 'Wir haben das Rad dafür.',
+  'hero.title': 'Zwei Räder,',
+  'hero.titleAccent': 'ganz Istrien.',
   'hero.lead':
     'Familienbetrieb mit eigener Werkstatt und Fahrradverleih, wenige Minuten von Premantura und Kap Kamenjak. Über zwanzig Modelle, Lieferung zur Unterkunft, Zubehör inklusive — von einem Nachmittag bis zwei Wochen.',
   'hero.cta': 'Zur Flotte',
@@ -561,8 +561,8 @@ const it: Dict = {
   'nav.language': 'Lingua', 'nav.skip': 'Vai al contenuto',
 
   'hero.eyebrow': 'Šišan · Pola · Istria',
-  'hero.title': "L'Istria si pedala piano.",
-  'hero.titleAccent': 'Noi abbiamo la bici giusta.',
+  'hero.title': 'Due ruote,',
+  'hero.titleAccent': 'tutta l’Istria.',
   'hero.lead':
     'Officina e noleggio bici a conduzione familiare a pochi minuti da Premantura e Capo Kamenjak. Oltre venti modelli, consegna in alloggio, accessori inclusi — da un pomeriggio a due settimane.',
   'hero.cta': 'Vedi le bici',
