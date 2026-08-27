@@ -15,6 +15,21 @@ npm run dev        # http://localhost:4321
 npm run build      # → dist/  (+ dist/api/data.json)
 npm run preview    # provjera build izlaza lokalno
 npm run redirects  # regenerira public/.htaccess iz rute-mape
+npm run build:pages  # demo build za GitHub Pages (base + noindex)
+```
+
+**Živi demo:** https://radivfil.github.io/BrunaBulicRentABikePula/
+
+Demo se gradi iz iste grane `main`, samo s `base: /BrunaBulicRentABikePula`
+i `noindex` na svakoj stranici — da nikad ne konkurira pravoj domeni u
+Googleu. Booking je u demo načinu (PHP end-point na Pagesu ne radi), što je
+za prikaz klijentu upravo ono što treba.
+
+Objava nove verzije demoa:
+
+```bash
+npm run build:pages
+cd dist && git init -b gh-pages && git add -A && git commit -m deploy   && git push -f https://github.com/radivfil/BrunaBulicRentABikePula.git gh-pages
 ```
 
 ## Deploy na postojeći shared hosting

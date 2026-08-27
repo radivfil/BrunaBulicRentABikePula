@@ -9,7 +9,13 @@ import { SITE_URL } from './src/data/site.mjs';
 // Demo build za GitHub Pages: `npm run build:pages` postavi PAGES_BASE i
 // stranica se onda servira s /ime-repoa/ umjesto s korijena domene.
 // Produkcijski build (za shared hosting) ostaje potpuno nepromijenjen.
-const PAGES_BASE = process.env.PAGES_BASE;
+// PAGES_BASE se predaje BEZ vodece kose crte (samo ime repozitorija).
+// Razlog: Git Bash na Windowsu pretvara vrijednosti okoline koje pocinju
+// s '/' u Windows putanje, pa bi '/repo' postalo 'C:/Program Files/Git/repo'
+// i cijeli build bi dobio krive linkove. Kosa crta se dodaje ovdje.
+const PAGES_BASE = process.env.PAGES_BASE
+  ? `/${process.env.PAGES_BASE.replace(/^\/+|\/+$/g, '')}`
+  : undefined;
 const PAGES_SITE = process.env.PAGES_SITE;
 
 // Statični build: hosting je klasični shared/Apache, bez Node runtimea.
